@@ -1,2 +1,0 @@
-BasedOnStyle: Google # https://google.github.io/styleguide/cppguide.html
-IndentPPDirectives: BeforeHash

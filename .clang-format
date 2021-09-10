@@ -1,2 +1,4 @@
-BasedOnStyle: Google # https://google.github.io/styleguide/cppguide.html
+BasedOnStyle: Google
 IndentPPDirectives: BeforeHash
+IndentWidth: 4
+TabWidth: 4
