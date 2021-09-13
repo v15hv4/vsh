@@ -7,10 +7,12 @@
 #include <unistd.h>
 
 #include "errors.h"
+#include "path.h"
 
+// render prompt string
 void print_prompt() {
-    char* username = malloc(USERNAME_MAX);
-    char* hostname = malloc(HOSTNAME_MAX);
+    char* username = calloc(USERNAME_MAX, sizeof(char));
+    char* hostname = calloc(HOSTNAME_MAX, sizeof(char));
 
     // fetch current username
     username = getpwuid(getuid())->pw_name;
@@ -23,5 +25,5 @@ void print_prompt() {
         throw_fatal_error("Unable to retrieve hostname");
     }
 
-    printf("<%s@%s:%s> ", username, hostname, "~");
+    printf("<%s@%s:%s> ", username, hostname, shorten_path(get_current_path()));
 }

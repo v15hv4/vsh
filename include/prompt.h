@@ -5,7 +5,7 @@
 #define USERNAME_MAX 256
 #define HOSTNAME_MAX 256
 
-// print prompt string
+// render prompt string
 void print_prompt();
 
 #endif
