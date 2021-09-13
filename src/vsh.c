@@ -1,6 +1,6 @@
-#include <stdio.h>
+#include "libs.h"
 
 int main() {
-    printf("nice");
+    cprintf(ANSI_RED, "nice");
     return 0;
 }
