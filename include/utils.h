@@ -14,7 +14,4 @@
 // colored string output
 void cprintf(char* color, char* str);
 
-// render prompt string
-void print_prompt();
-
 #endif

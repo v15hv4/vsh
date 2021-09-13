@@ -1,6 +1,6 @@
-#include "libs.h"
+#include "prompt.h"
 
 int main() {
-    cprintf(ANSI_RED, "nice");
+    print_prompt();
     return 0;
 }
