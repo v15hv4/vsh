@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "errors.h"
 #include "path.h"
 #include "prompt.h"
+#include "utils.h"
 
 int main() {
     size_t input_size = 0;
@@ -16,7 +18,15 @@ int main() {
     while (1) {
         print_prompt();
         if (getline(&input_line, &input_size, stdin) == -1) break;
-        printf("you entered: %s", input_line);
+
+        // parse & execute semicolon separated commands
+        int num_commands = num_tokens(input_line, ";");
+        char** commands = tokenize(input_line, ";");
+        for (int i = 0; i < num_commands; i++) {
+            // TODO: implement fg and bg process execution here
+            char** tokens = tokenize(commands[i], " ");
+            execvp(tokens[0], tokens);
+        }
     }
 
     free(input_line);

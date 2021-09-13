@@ -11,7 +11,13 @@
 #define ANSI_WHITE "\x1b[37m"
 #define ANSI_RESET "\x1b[0m"
 
-// string formatted with colors
+// format string with colors
 char* colorize(char* color, char* str);
+
+// return number of tokens in string separated by delim
+int num_tokens(char* str, char* delim);
+
+// return list of tokens in string separated by delim
+char** tokenize(char* str, char* delim);
 
 #endif
