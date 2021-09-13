@@ -23,5 +23,5 @@ void print_prompt() {
         throw_fatal_error("Unable to retrieve hostname");
     }
 
-    printf("<%s@%s>\n", username, hostname);
+    printf("<%s@%s:%s> ", username, hostname, "~");
 }
