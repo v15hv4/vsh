@@ -11,7 +11,7 @@
 #define ANSI_WHITE "\x1b[37m"
 #define ANSI_RESET "\x1b[0m"
 
-// colored string output
-void cprintf(char* color, char* str);
+// string formatted with colors
+char* colorize(char* color, char* str);
 
 #endif
