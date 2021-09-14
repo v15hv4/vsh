@@ -40,3 +40,11 @@ int pwd(int argc, char** argv) {
     printf("%s\n", get_current_path());
     return 0;
 }
+
+int echo(int argc, char** argv) {
+    for (int i = 1; i < argc; i++) {
+        printf("%s ", argv[i]);
+    }
+    printf("\n");
+    return 0;
+}

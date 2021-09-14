@@ -31,7 +31,9 @@ int main() {
     };
 
     // function pointer enum for command callback
-    int (*_callback[])(int, char**) = {sys, cd, pwd, sys, sys, sys, sys, sys};
+    int (*_callback[])(int, char**) = {
+        sys, cd, pwd, echo, sys, sys, sys, sys,
+    };
     enum callback {
         kCall_sys,
         kCall_cd,
@@ -68,8 +70,8 @@ int main() {
             enum callback c_id = kCall_sys;        // callback id
 
             // tokenize command
-            int token_count = num_tokens(command, " ");
-            char** tokens = tokenize(command, " ");
+            int token_count = num_tokens(command, " \t\r\n\v\f");
+            char** tokens = tokenize(command, " \t\r\n\v\f");
 
             // determine number of times to execute command
             if (!strcmp(tokens[0], "repeat")) {
@@ -93,9 +95,11 @@ int main() {
             }
 
             // determine execution enum
-            if (c_id == kCall_cd || c_id == kCall_pwd) {
+            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo) {
+                // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
+                // execute command in the background if suffixed with &
                 e_id = kExec_background;
             }
 
