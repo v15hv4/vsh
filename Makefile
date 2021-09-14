@@ -6,8 +6,8 @@ ODIR=build/obj
 CC=gcc
 CFLAGS=-I$(IDIR)
 
-vsh: $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/prompt.o
-	$(CC) $(CFLAGS) -g $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/prompt.o -o $(BDIR)/vsh 
+vsh: $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o  $(ODIR)/prompt.o
+	$(CC) $(CFLAGS) -g $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o $(ODIR)/prompt.o -o $(BDIR)/vsh 
 	chmod +x build/vsh
 
 $(ODIR)/vsh.o: $(SDIR)/vsh.c
@@ -21,6 +21,9 @@ $(ODIR)/errors.o: $(SDIR)/errors.c
 
 $(ODIR)/path.o: $(SDIR)/path.c
 	$(CC) $(CFLAGS) -c $(SDIR)/path.c -o $(ODIR)/path.o
+
+$(ODIR)/proc.o: $(SDIR)/proc.c
+	$(CC) $(CFLAGS) -c $(SDIR)/proc.c -o $(ODIR)/proc.o
 
 $(ODIR)/prompt.o: $(SDIR)/prompt.c
 	$(CC) $(CFLAGS) -c $(SDIR)/prompt.c -o $(ODIR)/prompt.o

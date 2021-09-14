@@ -4,6 +4,7 @@
 
 #include "errors.h"
 #include "path.h"
+#include "proc.h"
 #include "prompt.h"
 #include "utils.h"
 
@@ -22,10 +23,11 @@ int main() {
         // parse & execute semicolon separated commands
         int num_commands = num_tokens(input_line, ";");
         char** commands = tokenize(input_line, ";");
+        printf("\n--- number of commands: %d ---", num_commands);
         for (int i = 0; i < num_commands; i++) {
             // TODO: implement fg and bg process execution here
             char** tokens = tokenize(commands[i], " ");
-            execvp(tokens[0], tokens);
+            execute_fg(sys, tokens);
         }
     }
 
