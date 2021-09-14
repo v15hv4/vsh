@@ -22,22 +22,19 @@ char* strip(char* str) {
 
 // return number of tokens in string separated by delim
 int num_tokens(char* str, char* delim) {
+    // strip whitespace
+    char* stripped_str = strip(str);
+
+    // enumerate tokens
     int token_count = 0;
-    char* token = strtok(strdup(str), delim);
+    char* token = strtok(stripped_str, delim);
     while (token) {
         token_count++;
         token = strtok(NULL, delim);
     }
 
     // decrement count if last non-whitespace character is the delimiter
-    char last_nws_char;
-    for (int i = strlen(str) - 1; i >= 0; i--) {
-        if (!isspace(str[i])) {
-            last_nws_char = str[i];
-            break;
-        }
-    }
-    if (last_nws_char == delim[0]) token_count--;
+    if (stripped_str[strlen(stripped_str) - 1] == delim[0]) token_count--;
 
     return token_count;
 }
