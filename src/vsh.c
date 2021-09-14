@@ -31,7 +31,7 @@ int main() {
     };
 
     // function pointer enum for command callback
-    int (*_callback[])(int, char**) = {sys, cd, sys, sys, sys, sys, sys, sys};
+    int (*_callback[])(int, char**) = {sys, cd, pwd, sys, sys, sys, sys, sys};
     enum callback {
         kCall_sys,
         kCall_cd,

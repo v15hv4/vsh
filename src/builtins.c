@@ -36,4 +36,7 @@ int cd(int argc, char** argv) {
     return 0;
 }
 
-int pwd(int argc, char** argv) {}
+int pwd(int argc, char** argv) {
+    printf("%s\n", get_current_path());
+    return 0;
+}
