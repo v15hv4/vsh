@@ -14,6 +14,9 @@
 // format string with colors
 char* colorize(char* color, char* str);
 
+// strip leading and trailing whitespace from string
+char* strip(char* str);
+
 // return number of tokens in string separated by delim
 int num_tokens(char* str, char* delim);
 

@@ -9,14 +9,7 @@
 #include "errors.h"
 
 // execute system process
-int sys(char** args) {
-    if (execvp(args[0], args)) {
-        char* errmsg = calloc(128, sizeof(char));
-        sprintf(errmsg, "%s", args[0]);
-        return throw_blocking_error(errmsg, -1);
-    }
-    return 0;
-}
+int sys(char** args) { return execvp(args[0], args); }
 
 // execute process in the foreground
 int execute_fg(int (*f)(char**), char** args) {
@@ -25,7 +18,12 @@ int execute_fg(int (*f)(char**), char** args) {
 
     if (pid == 0) {
         // child
-        return (*f)(args);
+        if ((*f)(args)) {
+            char* errmsg = calloc(128, sizeof(char));
+            sprintf(errmsg, "%s", args[0]);
+            throw_blocking_error(errmsg, -1);
+            exit(1);
+        };
     } else {
         // parent
         wait(NULL);
