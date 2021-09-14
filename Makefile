@@ -6,7 +6,7 @@ ODIR=build/obj
 CC=gcc
 CFLAGS=-I$(IDIR)
 
-DEPS=vsh utils errors path proc prompt cd
+DEPS=vsh utils errors path proc prompt builtins
 OBJS=$(patsubst %, $(ODIR)/%.o, $(DEPS))
 
 vsh: $(OBJS)

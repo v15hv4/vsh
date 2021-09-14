@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "cd.h"
+#include "builtins.h"
 #include "errors.h"
 #include "path.h"
 #include "proc.h"
