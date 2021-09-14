@@ -15,6 +15,9 @@ void throw_fatal_error(char* errmsg) {
 
 // display message and return error code
 int throw_blocking_error(char* errmsg, int errcode) {
+    char* error = calloc(7 + strlen(errmsg) + 1, sizeof(char));
+    strcat(error, "ERROR: ");
+    strcat(error, errmsg);
     perror(errmsg);
     return errcode;
 }

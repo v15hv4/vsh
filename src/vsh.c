@@ -19,7 +19,11 @@ int main() {
     while (1) {
         // render prompt and wait for input
         print_prompt();
-        if (getline(&input_line, &input_size, stdin) == -1) break;
+        if (getline(&input_line, &input_size, stdin) == -1) {
+            free(input_line);
+            printf("\nexit\n");
+            return 0;
+        };
 
         // parse & execute semicolon separated commands
         int num_commands = num_tokens(input_line, ";");
@@ -31,7 +35,5 @@ int main() {
         }
     }
 
-    free(input_line);
-    printf("\nexit\n");
     return 0;
 }
