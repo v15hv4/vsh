@@ -6,30 +6,15 @@ ODIR=build/obj
 CC=gcc
 CFLAGS=-I$(IDIR)
 
-vsh: $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o  $(ODIR)/prompt.o $(ODIR)/cd.o
-	$(CC) $(CFLAGS) -g $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o $(ODIR)/prompt.o $(ODIR)/cd.o -o $(BDIR)/vsh 
+DEPS=vsh utils errors path proc prompt cd
+OBJS=$(patsubst %, $(ODIR)/%.o, $(DEPS))
+
+vsh: $(OBJS)
+	$(CC) $(CFLAGS) -g $(OBJS) -o $(BDIR)/vsh 
 	chmod +x build/vsh
 
-$(ODIR)/vsh.o: $(SDIR)/vsh.c
-	$(CC) $(CFLAGS) -c $(SDIR)/vsh.c -o $(ODIR)/vsh.o
-
-$(ODIR)/utils.o: $(SDIR)/utils.c
-	$(CC) $(CFLAGS) -c $(SDIR)/utils.c -o $(ODIR)/utils.o
-
-$(ODIR)/errors.o: $(SDIR)/errors.c
-	$(CC) $(CFLAGS) -c $(SDIR)/errors.c -o $(ODIR)/errors.o
-
-$(ODIR)/path.o: $(SDIR)/path.c
-	$(CC) $(CFLAGS) -c $(SDIR)/path.c -o $(ODIR)/path.o
-
-$(ODIR)/proc.o: $(SDIR)/proc.c
-	$(CC) $(CFLAGS) -c $(SDIR)/proc.c -o $(ODIR)/proc.o
-
-$(ODIR)/prompt.o: $(SDIR)/prompt.c
-	$(CC) $(CFLAGS) -c $(SDIR)/prompt.c -o $(ODIR)/prompt.o
-
-$(ODIR)/cd.o: $(SDIR)/cd.c
-	$(CC) $(CFLAGS) -c $(SDIR)/cd.c -o $(ODIR)/cd.o
+$(ODIR)/%.o: $(SDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf ./build
