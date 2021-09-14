@@ -2,12 +2,12 @@
 #define PROC_H_
 
 // execute system process
-int sys(char** args);
+int sys(int argc, char** argv);
 
 // execute process in the foreground
-int execute_fg(int (*f)(char**), char** args);
+int execute_fg(int (*f)(int, char**), int argc, char** argv);
 
 // execute process in the background
-int execute_bg(int (*f)(char**), char** args);
+int execute_bg(int (*f)(int, char**), int argc, char** argv);
 
 #endif

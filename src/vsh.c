@@ -17,7 +17,7 @@ int main() {
     set_home_path(get_current_path());
 
     // function pointer enum for foreground/background execution
-    int (*_execute[])(int (*)(char**), char**) = {
+    int (*_execute[])(int (*)(int, char**), int, char**) = {
         execute_fg,
         execute_bg,
     };
@@ -27,7 +27,7 @@ int main() {
     };
 
     // function pointer enum for command callback
-    int (*_callback[])(char**) = {sys, sys, sys, sys, sys, sys, sys, sys};
+    int (*_callback[])(int, char**) = {sys, sys, sys, sys, sys, sys, sys, sys};
     enum callback {
         kCall_sys,
         kCall_cd,
@@ -92,7 +92,7 @@ int main() {
 
             // execute command
             for (int i = 1; i <= repeat; i++) {
-                (*_execute[e_id])((*_callback[c_id]), tokens);
+                (*_execute[e_id])((*_callback[c_id]), token_count, tokens);
             }
         }
     }

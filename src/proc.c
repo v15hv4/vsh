@@ -9,18 +9,18 @@
 #include "errors.h"
 
 // execute system process
-int sys(char** args) { return execvp(args[0], args); }
+int sys(int argc, char** argv) { return execvp(argv[0], argv); }
 
 // execute process in the foreground
-int execute_fg(int (*f)(char**), char** args) {
+int execute_fg(int (*f)(int, char**), int argc, char** argv) {
     pid_t pid = fork();
     if (pid < 0) return -1;
 
     if (pid == 0) {
         // child
-        if ((*f)(args)) {
+        if ((*f)(argc, argv)) {
             char* errmsg = calloc(128, sizeof(char));
-            sprintf(errmsg, "%s", args[0]);
+            sprintf(errmsg, "%s", argv[0]);
             throw_blocking_error(errmsg, -1);
             exit(1);
         };
@@ -33,13 +33,13 @@ int execute_fg(int (*f)(char**), char** args) {
 }
 
 // execute process in the background
-int execute_bg(int (*f)(char**), char** args) {
+int execute_bg(int (*f)(int, char**), int argc, char** argv) {
     pid_t pid = fork();
     if (pid < 0) return -1;
 
     if (pid == 0) {
         // child
-        printf("TODO: run %s in the background\n", args[0]);
+        printf("TODO: run %s in the background\n", argv[0]);
         return 0;
     } else {
         // parent
