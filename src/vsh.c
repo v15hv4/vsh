@@ -16,8 +16,27 @@ int main() {
     // set cwd as global home
     set_home_path(get_current_path());
 
-    // function pointer array for foreground/background execution
-    int (*execute[])(int (*)(char**), char**) = {execute_fg, execute_bg};
+    // function pointer enum for foreground/background execution
+    int (*_execute[])(int (*)(char**), char**) = {
+        execute_fg,
+        execute_bg,
+    };
+    enum execute {
+        kExec_fg,
+        kExec_bg,
+    };
+
+    // function pointer enum for command callback
+    int (*_callback[])(char**) = {sys, sys, sys, sys, sys, sys, sys, sys};
+    enum callback {
+        kCall_sys,
+        kCall_cd,
+        kCall_pwd,
+        kCall_echo,
+        kCall_ls,
+        kCall_pinfo,
+        kCall_history,
+    };
 
     // main loop
     while (1) {
@@ -33,9 +52,13 @@ int main() {
         int command_count = num_tokens(input_line, ";");
         char** commands = tokenize(input_line, ";");
         for (int i = 0; i < command_count; i++) {
-            char* command = strip(commands[i]);  // current command
-            int repeat = 1;  // number of times to execute command
-            int layer = 0;   // foreground: 0, background: 1
+            // current command
+            char* command = strip(commands[i]);
+
+            // command properties
+            int repeat = 1;                // number of times to execute command
+            enum execute e_id = kExec_fg;  // execution layer id
+            enum callback c_id = kCall_sys;  // callback id
 
             // tokenize command
             int token_count = num_tokens(command, " ");
@@ -44,19 +67,32 @@ int main() {
             // determine number of times to execute command
             if (!strcmp(tokens[0], "repeat")) {
                 repeat = atoi(tokens[1]);
-
-                // reassign tokens to that of the command to be repeated
-                tokens = &tokens[2];
+                tokens = &tokens[2];  // reassign to tokens of actual command
             }
 
-            // determine layer of command
+            // check if command is supposed to run in the background
             if (command[strlen(command) - 1] == '&') {
-                layer = 1;
+                e_id = kExec_bg;
+            }
+
+            // determine callback enum
+            if (!strcmp(tokens[0], "cd")) {
+                c_id = kCall_cd;
+            } else if (!strcmp(tokens[0], "pwd")) {
+                c_id = kCall_pwd;
+            } else if (!strcmp(tokens[0], "echo")) {
+                c_id = kCall_echo;
+            } else if (!strcmp(tokens[0], "ls")) {
+                c_id = kCall_ls;
+            } else if (!strcmp(tokens[0], "pinfo")) {
+                c_id = kCall_pinfo;
+            } else if (!strcmp(tokens[0], "history")) {
+                c_id = kCall_history;
             }
 
             // execute command
             for (int i = 1; i <= repeat; i++) {
-                (*execute[layer])(sys, tokens);
+                (*_execute[e_id])((*_callback[c_id]), tokens);
             }
         }
     }
