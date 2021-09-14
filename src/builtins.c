@@ -12,7 +12,9 @@ int cd(int argc, char** argv) {
     char* current_path = get_current_path();
     char* target_path;
 
-    if (argc < 2) {
+    if (argc > 2) {
+        return throw_custom_error("cd: must have exactly one argument", -1);
+    } else if (argc < 2) {
         // cd to home
         target_path = expand_path(get_home_path());
     } else if (!strcmp(argv[1], "-")) {
@@ -25,7 +27,7 @@ int cd(int argc, char** argv) {
 
     // execute cd
     if (chdir(target_path)) {
-        throw_blocking_error("cd", -1);
+        return throw_blocking_error("cd", -1);
     };
 
     // update previous path
@@ -33,3 +35,5 @@ int cd(int argc, char** argv) {
 
     return 0;
 }
+
+int pwd(int argc, char** argv) {}

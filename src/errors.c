@@ -21,3 +21,9 @@ int throw_blocking_error(char* errmsg, int errcode) {
     perror(errmsg);
     return errcode;
 }
+
+// display custom message and return error code
+int throw_custom_error(char* errmsg, int errcode) {
+    fprintf(stderr, "ERROR: %s\n", errmsg);
+    return errcode;
+}
