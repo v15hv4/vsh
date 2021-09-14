@@ -5,9 +5,12 @@
 int sys(int argc, char** argv);
 
 // execute process in the foreground
-int execute_fg(int (*f)(int, char**), int argc, char** argv);
+int execute_foreground(int (*f)(int, char**), int argc, char** argv);
 
 // execute process in the background
-int execute_bg(int (*f)(int, char**), int argc, char** argv);
+int execute_background(int (*f)(int, char**), int argc, char** argv);
+
+// execute process in the parent
+int execute_parent(int (*f)(int, char**), int argc, char** argv);
 
 #endif

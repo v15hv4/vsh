@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "cd.h"
 #include "errors.h"
 #include "path.h"
 #include "proc.h"
@@ -13,21 +14,24 @@ int main() {
     size_t input_size = 0;
     char* input_line = NULL;
 
-    // set cwd as global home
+    // set cwd as global home & fallback prev path
     set_home_path(get_current_path());
+    set_prev_path(get_current_path());
 
     // function pointer enum for foreground/background execution
     int (*_execute[])(int (*)(int, char**), int, char**) = {
-        execute_fg,
-        execute_bg,
+        execute_foreground,
+        execute_background,
+        execute_parent,
     };
     enum execute {
-        kExec_fg,
-        kExec_bg,
+        kExec_foreground,
+        kExec_background,
+        kExec_parent,
     };
 
     // function pointer enum for command callback
-    int (*_callback[])(int, char**) = {sys, sys, sys, sys, sys, sys, sys, sys};
+    int (*_callback[])(int, char**) = {sys, cd, sys, sys, sys, sys, sys, sys};
     enum callback {
         kCall_sys,
         kCall_cd,
@@ -40,11 +44,14 @@ int main() {
 
     // main loop
     while (1) {
-        // render prompt and wait for input
+        // render prompt
         print_prompt();
-        if (getline(&input_line, &input_size, stdin) == -1) {
+
+        // wait for input and handle exit command
+        if (getline(&input_line, &input_size, stdin) == -1 ||
+            !strcmp(strip(input_line), "exit")) {
+            printf("%sexit\n", !strcmp(strip(input_line), "exit") ? "" : "\n");
             free(input_line);
-            printf("\nexit\n");
             break;
         };
 
@@ -56,9 +63,9 @@ int main() {
             char* command = strip(commands[i]);
 
             // command properties
-            int repeat = 1;                // number of times to execute command
-            enum execute e_id = kExec_fg;  // execution layer id
-            enum callback c_id = kCall_sys;  // callback id
+            int repeat = 1;  // number of times to execute command
+            enum execute e_id = kExec_foreground;  // execution layer id
+            enum callback c_id = kCall_sys;        // callback id
 
             // tokenize command
             int token_count = num_tokens(command, " ");
@@ -68,11 +75,6 @@ int main() {
             if (!strcmp(tokens[0], "repeat")) {
                 repeat = atoi(tokens[1]);
                 tokens = &tokens[2];  // reassign to tokens of actual command
-            }
-
-            // check if command is supposed to run in the background
-            if (command[strlen(command) - 1] == '&') {
-                e_id = kExec_bg;
             }
 
             // determine callback enum
@@ -88,6 +90,13 @@ int main() {
                 c_id = kCall_pinfo;
             } else if (!strcmp(tokens[0], "history")) {
                 c_id = kCall_history;
+            }
+
+            // determine execution enum
+            if (c_id == kCall_cd || c_id == kCall_pwd) {
+                e_id = kExec_parent;
+            } else if (command[strlen(command) - 1] == '&') {
+                e_id = kExec_background;
             }
 
             // execute command

@@ -6,8 +6,8 @@ ODIR=build/obj
 CC=gcc
 CFLAGS=-I$(IDIR)
 
-vsh: $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o  $(ODIR)/prompt.o
-	$(CC) $(CFLAGS) -g $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o $(ODIR)/prompt.o -o $(BDIR)/vsh 
+vsh: $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o  $(ODIR)/prompt.o $(ODIR)/cd.o
+	$(CC) $(CFLAGS) -g $(ODIR)/vsh.o $(ODIR)/utils.o $(ODIR)/errors.o $(ODIR)/path.o $(ODIR)/proc.o $(ODIR)/prompt.o $(ODIR)/cd.o -o $(BDIR)/vsh 
 	chmod +x build/vsh
 
 $(ODIR)/vsh.o: $(SDIR)/vsh.c
@@ -27,6 +27,9 @@ $(ODIR)/proc.o: $(SDIR)/proc.c
 
 $(ODIR)/prompt.o: $(SDIR)/prompt.c
 	$(CC) $(CFLAGS) -c $(SDIR)/prompt.c -o $(ODIR)/prompt.o
+
+$(ODIR)/cd.o: $(SDIR)/cd.c
+	$(CC) $(CFLAGS) -c $(SDIR)/cd.c -o $(ODIR)/cd.o
 
 clean:
 	rm -rf ./build
