@@ -7,8 +7,7 @@
 
 // format string with colors
 char* colorize(char* color, char* str) {
-    char* colored_str =
-        calloc(strlen(str) + 3 * strlen(ANSI_RESET), sizeof(char));
+    char* colored_str = calloc(strlen(str) + 3 * strlen(ANSI_RESET), sizeof(char));
     sprintf(colored_str, "%s%s%s", color, str, ANSI_RESET);
     return colored_str;
 }

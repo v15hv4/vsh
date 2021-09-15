@@ -51,8 +51,7 @@ int main() {
         print_prompt();
 
         // wait for input and handle exit command
-        if (getline(&input_line, &input_size, stdin) == -1 ||
-            !strcmp(strip(input_line), "exit")) {
+        if (getline(&input_line, &input_size, stdin) == -1 || !strcmp(strip(input_line), "exit")) {
             printf("%sexit\n", !strcmp(strip(input_line), "exit") ? "" : "\n");
             free(input_line);
             break;
@@ -66,7 +65,7 @@ int main() {
             char* command = strip(commands[i]);
 
             // command properties
-            int repeat = 1;  // number of times to execute command
+            int repeat = 1;                        // number of times to execute command
             enum execute e_id = kExec_foreground;  // execution layer id
             enum callback c_id = kCall_sys;        // callback id
 

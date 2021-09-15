@@ -2,3 +2,4 @@ BasedOnStyle: Google
 IndentPPDirectives: BeforeHash
 IndentWidth: 4
 TabWidth: 4
+ColumnLimit: 100

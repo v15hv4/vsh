@@ -26,7 +26,6 @@ void print_prompt() {
         throw_fatal_error("Unable to retrieve hostname");
     }
 
-    printf("<%s%s%s:%s> ", colorize(ANSI_GREEN, username),
-           colorize(ANSI_GREEN, "@"), colorize(ANSI_GREEN, hostname),
-           colorize(ANSI_BLUE, shorten_path(get_current_path())));
+    printf("<%s%s%s:%s> ", colorize(ANSI_GREEN, username), colorize(ANSI_GREEN, "@"),
+           colorize(ANSI_GREEN, hostname), colorize(ANSI_BLUE, shorten_path(get_current_path())));
 }

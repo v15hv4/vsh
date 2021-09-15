@@ -12,8 +12,7 @@ char* PREV_PATH;
 
 // get absolute path of input relative path
 char* expand_path(char* path) {
-    char* expanded_path =
-        calloc(strlen(HOME_PATH) + strlen(path), sizeof(char));
+    char* expanded_path = calloc(strlen(HOME_PATH) + strlen(path), sizeof(char));
 
     // tilde expansion
     if (path[0] == '~') {
