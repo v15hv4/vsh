@@ -12,6 +12,9 @@
 #include "utils.h"
 
 int main() {
+    // control debug mode
+    int DEBUG = 0;
+
     size_t input_size = 0;
     char* input_line = NULL;
 
@@ -80,6 +83,7 @@ int main() {
 
                 // reassign to tokens of actual command
                 tokens = &tokens[2];
+                token_count -= 2;
             }
 
             // determine callback enum
@@ -100,7 +104,7 @@ int main() {
             }
 
             // determine execution enum
-            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo) {
+            if (c_id == kCall_cd || c_id == kCall_pwd) {
                 // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
@@ -124,6 +128,19 @@ int main() {
                     new_final_token[new_final_token_len - 1] = '\0';
                     tokens[token_count - 1] = new_final_token;
                 }
+            }
+
+            // DEBUG OUTPUT
+            if (DEBUG) {
+                printf(
+                    "----------\n"
+                    "e_id: %d\n"
+                    "c_id: %d\n"
+                    "repeat: %d\n"
+                    "token_count: %d\n"
+                    "tokens: %s\n"
+                    "----------\n",
+                    e_id, c_id, repeat, token_count, join(tokens, token_count, ", "));
             }
 
             // execute command

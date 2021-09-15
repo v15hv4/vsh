@@ -49,5 +49,6 @@ int echo(int argc, char** argv) {
         printf("%s ", argv[i]);
     }
     printf("\n");
-    return 0;
+
+    exit(0);
 }
