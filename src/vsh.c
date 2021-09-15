@@ -33,7 +33,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, cd, pwd, echo, ls, sys, sys, sys,
+        sys, cd, pwd, echo, ls, sys, sys, jobs,
     };
     enum callback {
         kCall_sys,
@@ -43,6 +43,7 @@ int main() {
         kCall_ls,
         kCall_pinfo,
         kCall_history,
+        kCall_jobs,
     };
 
     // main loop
@@ -76,7 +77,9 @@ int main() {
             // determine number of times to execute command
             if (!strcmp(tokens[0], "repeat")) {
                 repeat = atoi(tokens[1]);
-                tokens = &tokens[2];  // reassign to tokens of actual command
+
+                // reassign to tokens of actual command
+                tokens = &tokens[2];
             }
 
             // determine callback enum
@@ -92,6 +95,8 @@ int main() {
                 c_id = kCall_pinfo;
             } else if (!strcmp(tokens[0], "history")) {
                 c_id = kCall_history;
+            } else if (!strcmp(tokens[0], "jobs")) {
+                c_id = kCall_jobs;
             }
 
             // determine execution enum
@@ -101,6 +106,18 @@ int main() {
             } else if (command[strlen(command) - 1] == '&') {
                 // execute command in the background if suffixed with &
                 e_id = kExec_background;
+
+                // strip & from command and tokens
+                if (tokens[token_count - 1][0] == '&') {
+                    // remove last token
+                    token_count--;
+                    char** new_tokens = calloc(token_count, sizeof(char*));
+                    for (int i = 0; i < token_count; i++) new_tokens[i] = tokens[i];
+                    tokens = new_tokens;
+                } else {
+                    // remove last character of last token
+                    tokens[token_count - 1][strlen(tokens[token_count - 1] - 2)] = '\0';
+                }
             }
 
             // execute command

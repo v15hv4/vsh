@@ -58,3 +58,23 @@ char** tokenize(char* str, char* delim) {
 
     return tokens;
 }
+
+// return string made by concatenating array elements with delim
+char* join(char** arr, int arr_length, char* delim) {
+    // determine joined string length
+    int str_length = 0;
+    for (int i = 0; i < arr_length - 1; i++) {
+        str_length += strlen(arr[i]) + strlen(delim);
+    }
+    str_length += strlen(arr[arr_length - 1]);
+
+    // generate string
+    char* str = calloc(str_length, sizeof(char));
+    for (int i = 0; i < arr_length - 1; i++) {
+        strcat(str, arr[i]);
+        strcat(str, delim);
+    }
+    strcat(str, arr[arr_length - 1]);
+
+    return str;
+}

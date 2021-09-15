@@ -56,7 +56,7 @@ int ls(int argc, char** argv) {
 
         struct dirent* entry;
         DIR* dir = opendir(dirs[i]);
-        if (!dir) return throw_blocking_error("ls", -1);
+        if (!dir) exit(throw_blocking_error("ls", -1));
 
         // count number of entries in target directory
         int entry_count = 0;
@@ -156,7 +156,7 @@ int ls(int argc, char** argv) {
                     if (file_type[0] == 'l') {
                         file_link = calloc(PATH_MAX, sizeof(char));
                         if (readlink(path, file_link, PATH_MAX) == -1) {
-                            return throw_custom_error("ls: unable to read symlink pathname", -1);
+                            exit(throw_custom_error("ls: unable to read symlink pathname", -1));
                         }
                     }
 
@@ -203,8 +203,6 @@ int ls(int argc, char** argv) {
                 printf("%s\n", col_name_link[i]);
             }
         }
-
-        printf("\n");
     }
 
     exit(0);
