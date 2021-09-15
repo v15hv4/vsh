@@ -2,6 +2,7 @@
 
 #include <dirent.h>
 #include <linux/limits.h>
+#include <math.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,7 +82,7 @@ int ls(int argc, char** argv) {
         int max_size_width = 1;
 
         // count total block size
-        blksize_t total_block_size = 0;
+        double total_block_size = 0;
 
         int entry_iter = 0;
         rewinddir(dir);
@@ -165,8 +166,7 @@ int ls(int argc, char** argv) {
                     strcat(file_type_perms, file_type);
                     strcat(file_type_perms, file_perms);
 
-                    char* file_name_link =
-                        calloc(strlen(file_name) + 4 + strlen(file_link), sizeof(char));
+                    char* file_name_link = calloc(strlen(file_name) + 4 + PATH_MAX, sizeof(char));
                     strcat(file_name_link, file_name);
                     strcat(file_name_link, file_type[0] == 'l' ? " -> " : "");
                     strcat(file_name_link, file_link);
@@ -191,7 +191,8 @@ int ls(int argc, char** argv) {
         }
 
         // print total block size if -l set
-        if (l_flag) printf("total %ld\n", total_block_size / 2);
+        if (l_flag) printf("total %d\n", (int)ceil(total_block_size / 2));
+
         // print list of entries
         for (int i = 0; i < entry_count; i++) {
             if (l_flag) {
@@ -206,5 +207,5 @@ int ls(int argc, char** argv) {
         printf("\n");
     }
 
-    return 0;
+    exit(0);
 }

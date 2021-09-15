@@ -5,16 +5,17 @@ ODIR=build/obj
 
 CC=gcc
 CFLAGS=-I$(IDIR)
+LIBS=-lm
 
 DEPS=vsh utils errors path proc prompt builtins ls
 OBJS=$(patsubst %, $(ODIR)/%.o, $(DEPS))
 
 vsh: $(OBJS)
-	$(CC) $(CFLAGS) -g $(OBJS) -o $(BDIR)/vsh 
+	$(CC) $(CFLAGS) $(LIBS) -g $(OBJS) -o $(BDIR)/vsh 
 	chmod +x build/vsh
 
 $(ODIR)/%.o: $(SDIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
 
 clean:
 	rm -rf ./build

@@ -95,8 +95,8 @@ int main() {
             }
 
             // determine execution enum
-            if (c_id != kCall_sys) {
-                // execute shell builtins & custom commands in parent process
+            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo) {
+                // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
                 // execute command in the background if suffixed with &
