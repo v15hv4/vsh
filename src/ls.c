@@ -90,30 +90,36 @@ int ls(int argc, char** argv) {
             // ignore hidden files if -a is not set
             if (!a_flag && entry->d_name[0] == '.') continue;
 
-            // handle -l behaviour
-            if (!l_flag) {
-                // determine name
-                col_name_link[entry_iter] = entry->d_name;
-            } else {
-                struct stat stats;
-                char* path = calloc(strlen(dirs[i]) + strlen(entry->d_name) + 2, sizeof(char));
-                strcat(path, dirs[i]);
-                strcat(path, "/");
-                strcat(path, entry->d_name);
+            struct stat stats;
+            char* path = calloc(strlen(dirs[i]) + strlen(entry->d_name) + 2, sizeof(char));
+            strcat(path, dirs[i]);
+            strcat(path, "/");
+            strcat(path, entry->d_name);
 
-                if (lstat(path, &stats) == 0) {
+            if (lstat(path, &stats) == 0) {
+                // determine file type
+                char* file_type = S_ISREG(stats.st_mode)    ? "-"
+                                  : S_ISLNK(stats.st_mode)  ? "l"
+                                  : S_ISDIR(stats.st_mode)  ? "d"
+                                  : S_ISCHR(stats.st_mode)  ? "c"
+                                  : S_ISBLK(stats.st_mode)  ? "b"
+                                  : S_ISFIFO(stats.st_mode) ? "p"
+                                  : S_ISSOCK(stats.st_mode) ? "s"
+                                                            : "-";
+
+                // determine name
+                char* file_name = colorize(file_type[0] == 'd'   ? ANSI_BLUE
+                                           : file_type[0] == 'l' ? ANSI_CYAN
+                                                                 : ANSI_WHITE,
+                                           entry->d_name);
+
+                // handle -l behaviour
+                if (!l_flag) {
+                    // determine name
+                    col_name_link[entry_iter] = file_name;
+                } else {
                     // update total block size
                     total_block_size += stats.st_blocks;
-
-                    // determine file type
-                    char* file_type = S_ISREG(stats.st_mode)    ? "-"
-                                      : S_ISLNK(stats.st_mode)  ? "l"
-                                      : S_ISDIR(stats.st_mode)  ? "d"
-                                      : S_ISCHR(stats.st_mode)  ? "c"
-                                      : S_ISBLK(stats.st_mode)  ? "b"
-                                      : S_ISFIFO(stats.st_mode) ? "p"
-                                      : S_ISSOCK(stats.st_mode) ? "s"
-                                                                : "-";
 
                     // determine permissions
                     char* file_perms = calloc(16, sizeof(char));
@@ -144,12 +150,6 @@ int ls(int argc, char** argv) {
                     // determine last modified timestamp
                     char* file_modified = calloc(32, sizeof(char));
                     strftime(file_modified, 32, "%b %d %Y %R", localtime((time_t*)&stats.st_mtim));
-
-                    // determine name
-                    char* file_name = colorize(file_type[0] == 'd'   ? ANSI_BLUE
-                                               : file_type[0] == 'l' ? ANSI_CYAN
-                                                                     : ANSI_WHITE,
-                                               entry->d_name);
 
                     // determine link path if symlink
                     char* file_link = "";
