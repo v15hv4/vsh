@@ -5,6 +5,7 @@
 
 #include "builtins.h"
 #include "errors.h"
+#include "ls.h"
 #include "path.h"
 #include "proc.h"
 #include "prompt.h"
@@ -32,7 +33,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, cd, pwd, echo, sys, sys, sys, sys,
+        sys, cd, pwd, echo, ls, sys, sys, sys,
     };
     enum callback {
         kCall_sys,
@@ -95,8 +96,8 @@ int main() {
             }
 
             // determine execution enum
-            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo) {
-                // execute shell builtins in parent process
+            if (c_id != kCall_sys) {
+                // execute shell builtins & custom commands in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
                 // execute command in the background if suffixed with &
