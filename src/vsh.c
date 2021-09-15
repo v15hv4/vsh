@@ -7,6 +7,7 @@
 #include "errors.h"
 #include "ls.h"
 #include "path.h"
+#include "pinfo.h"
 #include "proc.h"
 #include "prompt.h"
 #include "utils.h"
@@ -15,6 +16,7 @@ int main() {
     // control debug mode
     int DEBUG = 0;
 
+    // initialize input buffer
     size_t input_size = 0;
     char* input_line = NULL;
 
@@ -36,7 +38,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, cd, pwd, echo, ls, sys, sys, jobs,
+        sys, cd, pwd, echo, ls, pinfo, sys, jobs,
     };
     enum callback {
         kCall_sys,
@@ -104,7 +106,7 @@ int main() {
             }
 
             // determine execution enum
-            if (c_id == kCall_cd || c_id == kCall_pwd) {
+            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_pinfo) {
                 // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
