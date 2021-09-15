@@ -109,14 +109,20 @@ int main() {
 
                 // strip & from command and tokens
                 if (tokens[token_count - 1][0] == '&') {
-                    // remove last token
+                    // remove final token
                     token_count--;
                     char** new_tokens = calloc(token_count, sizeof(char*));
                     for (int i = 0; i < token_count; i++) new_tokens[i] = tokens[i];
                     tokens = new_tokens;
                 } else {
-                    // remove last character of last token
-                    tokens[token_count - 1][strlen(tokens[token_count - 1] - 2)] = '\0';
+                    // remove last character of final token
+                    int new_final_token_len = strlen(tokens[token_count - 1]);
+                    char* new_final_token = calloc(new_final_token_len, sizeof(char));
+                    for (int i = 0; i < new_final_token_len - 1; i++) {
+                        new_final_token[i] = tokens[token_count - 1][i];
+                    }
+                    new_final_token[new_final_token_len - 1] = '\0';
+                    tokens[token_count - 1] = new_final_token;
                 }
             }
 
