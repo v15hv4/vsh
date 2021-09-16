@@ -34,7 +34,7 @@ int pinfo(int argc, char** argv) {
     char* stat_buffer = calloc(STAT_SIZE, sizeof(char));
     if (!stat_file) return throw_blocking_error("pinfo", -1);
     fread(stat_buffer, 1, STAT_SIZE, stat_file);
-    char** stat_values = tokenize(stat_buffer, " ");
+    char** stat_values = split(stat_buffer, " ");
 
     pstatus = stat_values[2];                                      // status given by state field
     pforeground = (atoi(stat_values[7]) == atoi(stat_values[4]));  // in foreground if tpgid == pgrp

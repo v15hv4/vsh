@@ -84,10 +84,10 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv) {
     if (pid < 0) return -1;
 
     if (pid == 0) {
-        // child
+        // execute command in the child process
         (*f)(argc, argv);
     } else {
-        // parent
+        // wait for child to finish execution in the parent process
         wait(NULL);
     }
 
@@ -100,11 +100,13 @@ int execute_background(int (*f)(int, char**), int argc, char** argv) {
     if (pid < 0) return -1;
 
     if (pid == 0) {
-        // child
+        // create a new process group for the child
         setpgid(0, 0);
+
+        // execute command in the child process
         (*f)(argc, argv);
     } else {
-        // parent
+        // maintain job info in the parent's job pool
         add_job(pid, join(argv, argc, " "));
     }
 

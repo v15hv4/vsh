@@ -203,6 +203,7 @@ int ls(int argc, char** argv) {
                 printf("%s\n", col_name_link[i]);
             }
         }
+        printf("\n");
     }
 
     exit(0);

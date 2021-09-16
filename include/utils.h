@@ -21,7 +21,7 @@ char* strip(char* str);
 int num_tokens(char* str, char* delim);
 
 // return list of tokens in string separated by delim
-char** tokenize(char* str, char* delim);
+char** split(char* str, char* delim);
 
 // return string made by concatenating array elements with delim
 char* join(char** arr, int arr_length, char* delim);

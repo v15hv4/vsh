@@ -2,12 +2,15 @@
 #define BUILTINS_H_
 
 // execute shell builtin `cd`
-int cd(int argc, char** argv);
+int __cd(int argc, char** argv);
 
 // execute shell builtin `pwd`
-int pwd(int argc, char** argv);
+int __pwd(int argc, char** argv);
 
 // execute shell builtin `echo`
-int echo(int argc, char** argv);
+int __echo(int argc, char** argv);
+
+// execute shell builtin `exit`
+int __exit(int argc, char** argv);
 
 #endif

@@ -9,7 +9,7 @@
 #include "path.h"
 
 // execute shell builtin `cd`
-int cd(int argc, char** argv) {
+int __cd(int argc, char** argv) {
     char* current_path = get_current_path();
     char* target_path;
 
@@ -38,17 +38,24 @@ int cd(int argc, char** argv) {
 }
 
 // execute shell builtin `pwd`
-int pwd(int argc, char** argv) {
+int __pwd(int argc, char** argv) {
     printf("%s\n", get_current_path());
+
     return 0;
 }
 
 // execute shell builtin `echo`
-int echo(int argc, char** argv) {
+int __echo(int argc, char** argv) {
     for (int i = 1; i < argc; i++) {
         printf("%s ", argv[i]);
     }
     printf("\n");
 
+    return 0;
+}
+
+// execute shell builtin `exit`
+int __exit(int argc, char** argv) {
+    printf("exit\n");
     exit(0);
 }

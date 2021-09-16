@@ -7,7 +7,7 @@ CC=gcc
 CFLAGS=-I$(IDIR)
 LIBS=-lm
 
-DEPS=vsh utils errors path proc prompt builtins ls pinfo
+DEPS=vsh utils errors path proc prompt builtins history ls pinfo 
 OBJS=$(patsubst %, $(ODIR)/%.o, $(DEPS))
 
 vsh: $(OBJS)

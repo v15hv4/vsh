@@ -40,7 +40,7 @@ int num_tokens(char* str, char* delim) {
 }
 
 // return list of tokens in string separated by delim
-char** tokenize(char* str, char* delim) {
+char** split(char* str, char* delim) {
     // strip whitespace
     char* stripped_str = strip(str);
 

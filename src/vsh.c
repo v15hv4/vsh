@@ -5,6 +5,7 @@
 
 #include "builtins.h"
 #include "errors.h"
+#include "history.h"
 #include "ls.h"
 #include "path.h"
 #include "pinfo.h"
@@ -38,10 +39,11 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, cd, pwd, echo, ls, pinfo, sys, jobs,
+        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history, jobs,
     };
     enum callback {
         kCall_sys,
+        kCall_exit,
         kCall_cd,
         kCall_pwd,
         kCall_echo,
@@ -57,18 +59,20 @@ int main() {
         print_prompt();
 
         // wait for input and handle exit command
-        if (getline(&input_line, &input_size, stdin) == -1 || !strcmp(strip(input_line), "exit")) {
-            printf("%sexit\n", !strcmp(strip(input_line), "exit") ? "" : "\n");
+        if (getline(&input_line, &input_size, stdin) == -1) {
             free(input_line);
             break;
         };
 
         // parse & execute semicolon separated commands
         int command_count = num_tokens(input_line, ";");
-        char** commands = tokenize(input_line, ";");
+        char** commands = split(input_line, ";");
         for (int i = 0; i < command_count; i++) {
             // current command
             char* command = strip(commands[i]);
+
+            // write command to history file
+            write_history(command);
 
             // command properties
             int repeat = 1;                        // number of times to execute command
@@ -77,7 +81,7 @@ int main() {
 
             // tokenize command
             int token_count = num_tokens(command, " \t\r\n\v\f");
-            char** tokens = tokenize(command, " \t\r\n\v\f");
+            char** tokens = split(command, " \t\r\n\v\f");
 
             // determine number of times to execute command
             if (!strcmp(tokens[0], "repeat")) {
@@ -103,10 +107,13 @@ int main() {
                 c_id = kCall_history;
             } else if (!strcmp(tokens[0], "jobs")) {
                 c_id = kCall_jobs;
+            } else if (!strcmp(tokens[0], "exit")) {
+                c_id = kCall_exit;
             }
 
             // determine execution enum
-            if (c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_pinfo) {
+            if (c_id == kCall_exit || c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo ||
+                c_id == kCall_pinfo) {
                 // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
