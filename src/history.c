@@ -7,12 +7,6 @@
 
 #include "utils.h"
 
-// maintain history info
-struct History {
-    int size;
-    char** entries;
-};
-
 // read all entries from history file
 struct History read_history() {
     // initialize history entries
@@ -64,8 +58,14 @@ int write_history(char* command) {
     fprintf(history_file, "%s\n", command);
     fclose(history_file);
 
+    // refresh history cache
+    refetch_history_cache();
+
     return 0;
 }
+
+// refresh history cache
+void refetch_history_cache() { HISTORY_CACHE = read_history(); };
 
 // execute `history`
 int history(int argc, char** argv) {

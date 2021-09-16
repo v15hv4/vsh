@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "errors.h"
+#include "history.h"
 #include "path.h"
 
 // execute shell builtin `cd`
@@ -56,6 +57,9 @@ int __echo(int argc, char** argv) {
 
 // execute shell builtin `exit`
 int __exit(int argc, char** argv) {
+    // write history entry here because the shell will exit
+    write_history("exit");
     printf("exit\n");
+
     exit(0);
 }

@@ -7,11 +7,23 @@
 // path to history file
 #define HISTORY_PATH "/tmp/.vsh_history"
 
-// write to history file
-int write_history(char* command);
+// maintain history info
+struct History {
+    int size;
+    char** entries;
+};
+
+// maintain current history cache to minimize disk reads
+static struct History HISTORY_CACHE;
 
 // read all entries from history file
 struct History read_history();
+
+// write to history file
+int write_history(char* command);
+
+// refresh history cache
+void refetch_history_cache();
 
 // execute `history`
 int history(int argc, char** argv);

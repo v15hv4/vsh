@@ -21,6 +21,9 @@ int main() {
     size_t input_size = 0;
     char* input_line = NULL;
 
+    // initialize session history
+    refetch_history_cache();
+
     // set cwd as global home & fallback prev path
     set_home_path(get_current_path());
     set_prev_path(get_current_path());
