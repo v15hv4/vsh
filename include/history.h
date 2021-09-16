@@ -11,7 +11,7 @@
 int write_history(char* command);
 
 // read n entries from history file
-char* read_history(int n);
+struct History read_history(int n);
 
 // execute `history`
 int history(int argc, char** argv);
