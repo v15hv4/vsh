@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,7 @@
 #include "pinfo.h"
 #include "proc.h"
 #include "prompt.h"
+#include "signals.h"
 #include "utils.h"
 
 int main() {
@@ -20,6 +22,11 @@ int main() {
     // initialize input buffer
     size_t input_size = 0;
     char* input_line = NULL;
+
+    // set up signal handlers
+    handle_signal(SIGCHLD, reap_zombies);
+    handle_signal(SIGINT, do_nothing);
+    handle_signal(SIGTSTP, clear_line);
 
     // initialize session history
     refetch_history_cache();

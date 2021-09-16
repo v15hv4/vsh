@@ -9,12 +9,6 @@
 #include "errors.h"
 #include "utils.h"
 
-// maintain process info
-struct Process {
-    pid_t pid;
-    char* pname;
-};
-
 // maintain dynamic process pool
 struct ProcessPool {
     struct Process process;
@@ -46,8 +40,11 @@ int add_job(pid_t pid, char* pname) {
 }
 
 // remove job from pool
-int remove_job(pid_t pid) {
+struct Process remove_job(pid_t pid) {
+    struct Process process = {0, NULL};
+
     if (job_pool->process.pid == pid) {
+        process = job_pool->process;
         job_pool = job_pool->next;
     } else {
         struct ProcessPool* iter = job_pool;
@@ -55,14 +52,14 @@ int remove_job(pid_t pid) {
             if (iter->next->process.pid == pid) {
                 struct ProcessPool* target = iter->next;
                 iter->next = iter->next->next;
-                free(target);
+                process = target->process;
                 break;
             }
             iter = iter->next;
         }
     }
 
-    return 0;
+    return process;
 }
 
 // print current job list
