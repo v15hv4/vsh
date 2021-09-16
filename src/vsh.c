@@ -71,9 +71,6 @@ int main() {
             // current command
             char* command = strip(commands[i]);
 
-            // write command to history file
-            write_history(command);
-
             // command properties
             int repeat = 1;                        // number of times to execute command
             enum execute e_id = kExec_foreground;  // execution layer id
@@ -156,6 +153,9 @@ int main() {
             for (int i = 1; i <= repeat; i++) {
                 (*_execute[e_id])((*_callback[c_id]), token_count, tokens);
             }
+
+            // write command to history file
+            write_history(strip(input_line));
         }
     }
 

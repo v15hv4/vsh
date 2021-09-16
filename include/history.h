@@ -10,8 +10,8 @@
 // write to history file
 int write_history(char* command);
 
-// read n entries from history file
-struct History read_history(int n);
+// read all entries from history file
+struct History read_history();
 
 // execute `history`
 int history(int argc, char** argv);

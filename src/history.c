@@ -13,8 +13,8 @@ struct History {
     char** entries;
 };
 
-// read n entries from history file
-struct History read_history(int n) {
+// read all entries from history file
+struct History read_history() {
     // initialize history entries
     struct History existing = {0, NULL};
 
@@ -69,13 +69,13 @@ int write_history(char* command) {
 
 // execute `history`
 int history(int argc, char** argv) {
-    int entry_count = argc < 2 ? HISTORY_MAX : atoi(argv[1]);
+    struct History existing = read_history();
+    int entry_count = argc < 2 ? existing.size : atoi(argv[1]);
 
-    struct History existing = read_history(entry_count);
-    for (int i = 0; i < existing.size; i++) {
+    // print input number of latest history entries
+    for (int i = existing.size - entry_count; i < existing.size; i++) {
         printf("%2d  %s", i + 1, existing.entries[i]);
     }
-    printf("\n");
 
     exit(0);
 }
