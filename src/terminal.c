@@ -8,9 +8,10 @@
 #include <unistd.h>
 
 #include "errors.h"
+#include "history.h"
 #include "prompt.h"
 
-// terminal structure
+// default terminal structure
 struct termios terminal;
 
 // disable raw mode
@@ -40,15 +41,56 @@ void handle_line_feed(int* buffer_open) {
 }
 
 // handle arrow keys
-void handle_arrow_keys(char* input_buffer, int* cursor) {
+void handle_arrow_keys(char* input_buffer, int* cursor, int* history_idx) {
+    struct History cache = read_history_cache();
     char es_buffer[3];
     es_buffer[2] = 0;
     if (read(STDIN_FILENO, es_buffer, 2) == 2) {
         if (es_buffer[1] == 'A') {
-            printf("");
+            // move history prev
+            if (cache.size - 1 >= *history_idx) {
+                (*history_idx)++;
+
+                // print history entry
+                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1,
+                       cache.entries[cache.size - *history_idx]);
+
+                // determine new cursor position
+                (*cursor) = 0;
+                for (int i = 0; i < strlen(cache.entries[cache.size - *history_idx]); i++) {
+                    if (cache.entries[cache.size - *history_idx][i] == '\t') (*cursor)++;
+                    (*cursor)++;
+                }
+
+                // set new input buffer
+                strcpy(input_buffer, cache.entries[cache.size - *history_idx]);
+            }
         } else if (es_buffer[1] == 'B') {
-            printf("");
+            // move history next
+            if (*history_idx > 1) {
+                (*history_idx)--;
+
+                // print history entry
+                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1,
+                       cache.entries[cache.size - *history_idx]);
+
+                // determine new cursor position
+                (*cursor) = 0;
+                for (int i = 0; i < strlen(cache.entries[cache.size - *history_idx]); i++) {
+                    if (cache.entries[cache.size - *history_idx][i] == '\t') (*cursor)++;
+                    (*cursor)++;
+                }
+
+                // set new input buffer
+                strcpy(input_buffer, cache.entries[cache.size - *history_idx]);
+            } else {
+                (*history_idx) = 0;
+                printf("\e[%dD\e[K", *cursor ? *cursor : -1);
+                (*cursor) = 0;
+                strcpy(input_buffer, "");
+            }
         } else if (es_buffer[1] == 'C') {
+            // move cursor right
             if (*cursor <= (int)strlen(input_buffer) - 1) {
                 // traverse a tab
                 if (input_buffer[*cursor] == 9) {
@@ -59,6 +101,7 @@ void handle_arrow_keys(char* input_buffer, int* cursor) {
                 (*cursor)++;
             }
         } else if (es_buffer[1] == 'D') {
+            // move cursor left
             if (*cursor > 0) {
                 // traverse a tab
                 if (input_buffer[*cursor - 1] == 9) {
@@ -69,7 +112,7 @@ void handle_arrow_keys(char* input_buffer, int* cursor) {
                 (*cursor)--;
             }
         } else {
-            printf("%c", es_buffer[1]);
+            /* printf("%c", es_buffer[1]); */
         }
     }
 }
@@ -121,6 +164,9 @@ char* get_raw_input() {
     // control buffer
     int buffer_open = 1;
 
+    // control history
+    int history_idx = 0;
+
     enable_raw_mode();
     memset(input_buffer, '\0', INPUT_MAX);
     while (buffer_open && (read(STDIN_FILENO, &input_char, 1) == 1)) {
@@ -131,7 +177,7 @@ char* get_raw_input() {
                 handle_line_feed(&buffer_open);
             } else if (input_char == 27) {
                 // arrow keys
-                handle_arrow_keys(input_buffer, &cursor);
+                handle_arrow_keys(input_buffer, &cursor, &history_idx);
             } else if (input_char == 127) {
                 // backspace
                 handle_backspace(input_buffer, &cursor);

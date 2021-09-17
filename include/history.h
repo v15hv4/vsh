@@ -22,6 +22,9 @@ struct History read_history();
 // write to history file
 int write_history(char* command);
 
+// read history cache
+struct History read_history_cache();
+
 // refresh history cache
 void refetch_history_cache();
 

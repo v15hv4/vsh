@@ -20,6 +20,7 @@ struct History read_history() {
         existing.entries = calloc(HISTORY_MAX + 1, sizeof(char*));
         while ((getline(&buffer_line, &buffer_size, history_file)) != -1) {
             existing.entries[existing.size] = strdup(buffer_line);
+            existing.entries[existing.size][strlen(existing.entries[existing.size]) - 1] = '\0';
             existing.size++;
         }
         fclose(history_file);
@@ -64,6 +65,11 @@ int write_history(char* command) {
     return 0;
 }
 
+// read history cache
+struct History read_history_cache() {
+    return HISTORY_CACHE;
+}
+
 // refresh history cache
 void refetch_history_cache() { HISTORY_CACHE = read_history(); };
 
@@ -74,7 +80,7 @@ int history(int argc, char** argv) {
 
     // print input number of latest history entries
     for (int i = existing.size - entry_count; i < existing.size; i++) {
-        printf("%2d  %s", i + 1, existing.entries[i]);
+        printf("%2d  %s\n", i + 1, existing.entries[i]);
     }
 
     exit(0);
