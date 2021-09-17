@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,20 +14,17 @@
 #include "proc.h"
 #include "prompt.h"
 #include "signals.h"
+#include "terminal.h"
 #include "utils.h"
 
 int main() {
     // control debug mode
     int DEBUG = 0;
 
-    // initialize input buffer
-    size_t input_size = 0;
-    char* input_line = NULL;
-
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
     handle_signal(SIGINT, do_nothing);
-    handle_signal(SIGTSTP, clear_line);
+    signal(SIGTSTP, SIG_IGN);
 
     // initialize session history
     refetch_history_cache();
@@ -65,14 +63,15 @@ int main() {
 
     // main loop
     while (1) {
+        // disable buffering on stdout
+        setbuf(stdout, NULL);
+
         // render prompt
         print_prompt();
 
-        // wait for input and handle exit command
-        if (getline(&input_line, &input_size, stdin) == -1) {
-            free(input_line);
-            break;
-        };
+        // TODO: get raw input if terminal else default input
+        char* input_line = get_raw_input();
+        /* char* input_line = get_default_input(); */
 
         // parse & execute semicolon separated commands
         int command_count = num_tokens(input_line, ";");

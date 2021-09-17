@@ -1,6 +1,7 @@
 #ifndef PATH_H_
 #define PATH_H_
 
+// maximum path length
 #define PATH_MAX 4096
 
 // get absolute path of input relative path

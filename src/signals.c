@@ -46,10 +46,3 @@ void do_nothing(int signal) {
     print_prompt();
     fflush(stdout);
 }
-
-// clear current line
-void clear_line(int signal) {
-    printf("\x1b[2K\r");
-    print_prompt();
-    fflush(stdout);
-}
