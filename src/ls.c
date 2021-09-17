@@ -148,8 +148,16 @@ int ls(int argc, char** argv) {
                     sprintf(file_size, "%ld", stats.st_size);
 
                     // determine last modified timestamp
+                    char* file_modified_format = "%b %d %R";
                     char* file_modified = calloc(32, sizeof(char));
-                    strftime(file_modified, 32, "%b %d %Y %R", localtime((time_t*)&stats.st_mtim));
+
+                    // show year instead of time if entry older than 6 months
+                    if (labs(time(NULL) - stats.st_mtim.tv_sec) > (6 * 2629743)) {
+                        file_modified_format = "%b %d  %Y";
+                    }
+
+                    strftime(file_modified, 32, file_modified_format,
+                             localtime((time_t*)&stats.st_mtim));
 
                     // determine link path if symlink
                     char* file_link = "";
@@ -194,16 +202,17 @@ int ls(int argc, char** argv) {
         if (l_flag) printf("total %d\n", (int)ceil(total_block_size / 2));
 
         // print list of entries
-        for (int i = 0; i < entry_count; i++) {
+        for (int j = 0; j < entry_count; j++) {
             if (l_flag) {
-                printf("%s %*s %*s %*s %*s %s %s\n", col_type_perms[i], max_hls_width, col_hls[i],
-                       max_owner_width, col_owner[i], max_group_width, col_group[i], max_size_width,
-                       col_size[i], col_modified[i], col_name_link[i]);
+                printf("%s %*s %*s %*s %*s %s %s\n", col_type_perms[j], max_hls_width, col_hls[j],
+                       max_owner_width, col_owner[j], max_group_width, col_group[j], max_size_width,
+                       col_size[j], col_modified[j], col_name_link[j]);
             } else {
-                printf("%s\n", col_name_link[i]);
+                printf("%s\n", col_name_link[j]);
             }
         }
-        printf("\n");
+
+        if (i != dir_count - 1) printf("\n");
     }
 
     exit(0);
