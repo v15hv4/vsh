@@ -47,7 +47,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history, jobs,
+        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history,
     };
     enum callback {
         kCall_sys,
@@ -58,7 +58,6 @@ int main() {
         kCall_ls,
         kCall_pinfo,
         kCall_history,
-        kCall_jobs,
     };
 
     // main loop
@@ -111,8 +110,6 @@ int main() {
                 c_id = kCall_pinfo;
             } else if (!strcmp(tokens[0], "history")) {
                 c_id = kCall_history;
-            } else if (!strcmp(tokens[0], "jobs")) {
-                c_id = kCall_jobs;
             } else if (!strcmp(tokens[0], "exit")) {
                 c_id = kCall_exit;
             }

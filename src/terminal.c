@@ -155,6 +155,25 @@ void handle_exit(char* input_buffer) {
     exit(0);
 }
 
+// handle standard input
+void handle_standard(char* input_buffer, int* cursor, char input_char) {
+    if (*cursor == strlen(input_buffer)) {
+        input_buffer[(*cursor)++] = input_char;
+        printf("%c", input_char);
+    } else {
+        for (int i = (int)strlen(input_buffer); i >= *cursor; i--) {
+            input_buffer[i + 1] = input_buffer[i];
+        }
+        input_buffer[(*cursor)++] = input_char;
+        if ((*cursor) - 1) {
+            printf("\e[%dD\e[K%s\e[%dD", (*cursor) - 1, input_buffer,
+                   (int)strlen(input_buffer) - (*cursor));
+        } else {
+            printf("\e[K%s\e[%dD", input_buffer, (int)strlen(input_buffer) - (*cursor));
+        }
+    }
+}
+
 // get raw terminal input
 char* get_raw_input() {
     int cursor = 0;
@@ -192,13 +211,11 @@ char* get_raw_input() {
                 handle_exit(input_buffer);
             } else {
                 // default behavior
-                input_buffer[cursor++] = input_char;
-                printf("%c", input_char);
+                /* handle_standard(input_buffer, &cursor, input_char); */
             }
         } else {
             // handle normal characters
-            input_buffer[cursor++] = input_char;
-            printf("%c", input_char);
+            handle_standard(input_buffer, &cursor, input_char);
         }
     }
     disable_raw_mode();
