@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 #include "errors.h"
+#include "path.h"
 #include "utils.h"
 
 // execute `ls`
@@ -28,7 +29,7 @@ int ls(int argc, char** argv) {
         if (argv[i][0] == '-') {
             flags[flag_count++] = &argv[i][1];
         } else {
-            dirs[dir_count++] = argv[i];
+            dirs[dir_count++] = expand_path(argv[i]);
         }
     }
 
