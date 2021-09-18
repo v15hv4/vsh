@@ -9,6 +9,7 @@
 
 #include "errors.h"
 #include "history.h"
+#include "proc.h"
 #include "prompt.h"
 
 // default terminal structure
@@ -150,6 +151,9 @@ void handle_clear(char* input_buffer, int* cursor) {
 
 // handle exit
 void handle_exit(char* input_buffer) {
+    // kill all children
+    clear_jobs();
+
     free(input_buffer);
     printf("\nexit\n");
     exit(0);

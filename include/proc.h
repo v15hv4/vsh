@@ -13,6 +13,9 @@ int add_job(int pid, char* pname);
 // remove job from pool
 struct Process remove_job(int pid);
 
+// clear all jobs from pool
+int clear_jobs();
+
 // execute process in the foreground
 int execute_foreground(int (*f)(int, char**), int argc, char** argv);
 

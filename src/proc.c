@@ -1,5 +1,6 @@
 #include "proc.h"
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -60,6 +61,16 @@ struct Process remove_job(pid_t pid) {
     }
 
     return process;
+}
+
+// clear all jobs from pool
+int clear_jobs() {
+    struct ProcessPool* iter = job_pool;
+    while (iter) {
+        killpg(iter->process.pid, SIGKILL);
+        iter = iter->next;
+    }
+    return 0;
 }
 
 // print current job list

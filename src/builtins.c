@@ -8,6 +8,7 @@
 #include "errors.h"
 #include "history.h"
 #include "path.h"
+#include "proc.h"
 
 // execute shell builtin `cd`
 int __cd(int argc, char** argv) {
@@ -57,6 +58,9 @@ int __echo(int argc, char** argv) {
 
 // execute shell builtin `exit`
 int __exit(int argc, char** argv) {
+    // kill all children
+    clear_jobs();
+
     // write history entry here because the shell will exit
     write_history("exit");
     printf("exit\n");
