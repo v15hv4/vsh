@@ -19,7 +19,7 @@
 
 int main() {
     // control debug mode
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
@@ -146,13 +146,14 @@ int main() {
             if (DEBUG) {
                 printf(
                     "----------\n"
+                    "input_line: %s\n"
                     "e_id: %d\n"
                     "c_id: %d\n"
                     "repeat: %d\n"
                     "token_count: %d\n"
                     "tokens: %s\n"
                     "----------\n",
-                    e_id, c_id, repeat, token_count, join(tokens, token_count, ", "));
+                    input_line, e_id, c_id, repeat, token_count, join(tokens, token_count, ", "));
             }
 
             // execute command

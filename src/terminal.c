@@ -52,42 +52,49 @@ void handle_arrow_keys(char* input_buffer, int* cursor, int* history_idx) {
             if (cache.size - 1 >= *history_idx) {
                 (*history_idx)++;
 
+                // extract target entry
+                char* entry = cache.entries[cache.size - *history_idx];
+
                 // print history entry
-                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1,
-                       cache.entries[cache.size - *history_idx]);
+                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1, entry);
 
                 // determine new cursor position
                 (*cursor) = 0;
-                for (int i = 0; i < strlen(cache.entries[cache.size - *history_idx]); i++) {
-                    if (cache.entries[cache.size - *history_idx][i] == '\t') (*cursor)++;
+                for (int i = 0; i < strlen(entry); i++) {
+                    if (entry[i] == '\t') (*cursor)++;
                     (*cursor)++;
                 }
 
                 // set new input buffer
-                strcpy(input_buffer, cache.entries[cache.size - *history_idx]);
+                strcpy(input_buffer, entry);
             }
         } else if (es_buffer[1] == 'B') {
             // move history next
             if (*history_idx > 1) {
                 (*history_idx)--;
 
+                // extract target entry
+                char* entry = cache.entries[cache.size - *history_idx];
+
                 // print history entry
-                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1,
-                       cache.entries[cache.size - *history_idx]);
+                memset(input_buffer, '\0', INPUT_MAX);
+                printf("\e[%dD\e[K%s", *cursor ? *cursor : -1, entry);
 
                 // determine new cursor position
                 (*cursor) = 0;
-                for (int i = 0; i < strlen(cache.entries[cache.size - *history_idx]); i++) {
-                    if (cache.entries[cache.size - *history_idx][i] == '\t') (*cursor)++;
+                for (int i = 0; i < strlen(entry); i++) {
+                    if (entry[i] == '\t') (*cursor)++;
                     (*cursor)++;
                 }
 
                 // set new input buffer
-                strcpy(input_buffer, cache.entries[cache.size - *history_idx]);
+                memset(input_buffer, '\0', INPUT_MAX);
+                strcpy(input_buffer, entry);
             } else {
                 (*history_idx) = 0;
                 printf("\e[%dD\e[K", *cursor ? *cursor : -1);
                 (*cursor) = 0;
+                memset(input_buffer, '\0', INPUT_MAX);
                 strcpy(input_buffer, "");
             }
         } else if (es_buffer[1] == 'C') {
