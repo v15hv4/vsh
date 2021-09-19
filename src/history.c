@@ -35,6 +35,21 @@ int write_history(char* command) {
     struct History cache = read_history_cache();
     if (cache.size > 0 && !strcmp(cache.entries[cache.size - 1], command)) return 0;
 
+    // preprocess command
+    char* processed_command = calloc(8 * strlen(command) + 2, sizeof(char));
+    int processed_command_length = 0;
+    for (int i = 0; i < strlen(command); i++) {
+        if (command[i] == '\t') {
+            strcat(processed_command, "        ");
+            processed_command_length += 8;
+        } else {
+            char c[2] = {command[i], '\0'};
+            strcat(processed_command, c);
+            processed_command_length++;
+        }
+    }
+    processed_command[processed_command_length] = '\0';
+
     // read & rewrite existing history file if it exists
     FILE* history_file = fopen(HISTORY_PATH, "r+");
     if (history_file) {
@@ -60,7 +75,7 @@ int write_history(char* command) {
     }
 
     // write new entry to history file
-    fprintf(history_file, "%s\n", command);
+    fprintf(history_file, "%s\n", processed_command);
     fclose(history_file);
 
     // refresh history cache

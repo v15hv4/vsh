@@ -19,7 +19,7 @@
 
 int main() {
     // control debug mode
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
@@ -160,10 +160,10 @@ int main() {
             for (int i = 1; i <= repeat; i++) {
                 (*_execute[e_id])((*_callback[c_id]), token_count, tokens);
             }
-
-            // write command to history file
-            write_history(strip(input_line));
         }
+
+        // write command to history file
+        write_history(strip(input_line));
     }
 
     return 0;
