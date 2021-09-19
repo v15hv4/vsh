@@ -92,9 +92,14 @@ int main() {
             if (!strcmp(tokens[0], "repeat")) {
                 repeat = atoi(tokens[1]);
 
-                // reassign to tokens of actual command
-                tokens = &tokens[2];
-                token_count -= 2;
+                // if `repeat` syntax is valid
+                if (repeat && token_count > 2) {
+                    // reassign to tokens of actual command
+                    tokens = &tokens[2];
+                    token_count -= 2;
+                } else {
+                    repeat = 1;
+                }
             }
 
             // determine callback enum
