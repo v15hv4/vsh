@@ -12,7 +12,7 @@ char* PREV_PATH;
 
 // get absolute path of input relative path
 char* expand_path(char* path) {
-    char* expanded_path = calloc(strlen(HOME_PATH) + strlen(path), sizeof(char));
+    char* expanded_path = calloc(PATH_MAX, sizeof(char));
 
     // tilde expansion
     if (path[0] == '~') {
@@ -27,10 +27,10 @@ char* expand_path(char* path) {
 
 // shorten input path by replacing home directory with ~
 char* shorten_path(char* path) {
-    char* shortened_path = calloc(strlen(path), sizeof(char));
+    char* shortened_path = calloc(PATH_MAX, sizeof(char));
 
     // replace home path with tilde
-    char* prefix = calloc(strlen(HOME_PATH), sizeof(char));
+    char* prefix = calloc(PATH_MAX, sizeof(char));
     strncpy(prefix, path, strlen(HOME_PATH));
     prefix[strlen(HOME_PATH)] = '\0';
     if (!strcmp(HOME_PATH, prefix)) {
