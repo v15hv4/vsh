@@ -33,7 +33,7 @@ struct History read_history() {
 int write_history(char* command) {
     // don't add command to history if it's the same as previous
     struct History cache = read_history_cache();
-    if (!strcmp(cache.entries[cache.size - 1], command)) return 0;
+    if (cache.size > 0 && !strcmp(cache.entries[cache.size - 1], command)) return 0;
 
     // read & rewrite existing history file if it exists
     FILE* history_file = fopen(HISTORY_PATH, "r+");
