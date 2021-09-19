@@ -48,7 +48,7 @@ The key combination `Ctrl+L` can be used to clear the screen.
 A list of commands built-in to the shell whose functions are impossible or
 inconvenient to implement by external executables.
 
-#### cd
+#### `cd`
 ```
 Usage: cd <path_to_directory>
 ```
@@ -61,13 +61,13 @@ Supports the following wildcards:
 - `.`: path to current directory
 - `..`: path to parent directory
 
-#### pwd
+#### `pwd`
 ```
 Usage: pwd
 ```
 Displays the current working directory of the shell.
 
-#### echo
+#### `echo`
 ```
 Usage: echo <string>
 ```
@@ -79,7 +79,7 @@ or environment variables.
 ### Custom Commands
 A list of custom-implemented or user-defined shell commands.
 
-#### ls
+#### `ls`
 ```
 Usage: ls <path_to_directory_1> <path_to_directory_2> ...
 ```
@@ -90,7 +90,7 @@ Supports the following options:
 - `-l`: use a long listing format
 Supports all the wildcards as `cd`.
 
-#### pinfo
+#### `pinfo`
 ```
 Usage: pinfo <pid>
 ```
@@ -103,32 +103,33 @@ Gives the following info:
 - Virtual Memory
 - Path to Executable
 
-#### repeat
+#### `repeat`
 ```
 Usage: repeat <number_of_times> <command>
 ```
 Repeats the command specified by the second input argument sequentially as 
 many times as specified by the first input argument.
 
-#### history
+#### `history`
 ```
 Usage: history <number_of_entries>
 ```
 Prints the latest number of entries from the shell's command history as
 specified by the first input argument. In case of no arguments, prints all
 the commands stored in history.  
-Stores upto 20 commands, and ignores consecutively repeated commands.
+Stores upto 20 of the latest commands, and ignores consecutively repeated ones.  
+Commands are tracked across all sessions of the shell.
 
 ### Additional Commands
 A list of additional commands added for convenience of the shell user.
 
-#### exit
+#### `exit`
 ```
 Usage: exit
 ```
 Exits the shell, and terminates all of its running background processes.
 
-#### clear
+#### `clear`
 ```
 Usage: clear
 ```
@@ -150,3 +151,5 @@ the shell as follows:
 - 1 month = 30.44 days = 2629743 seconds. This determines whether a file is
   older/newer than 6 months and conditionally displays the year or hours and 
   minutes in long listing format.
+- The shell user has read and write access to `/tmp`. This is necessary
+  to manage the history file.
