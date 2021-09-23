@@ -12,8 +12,9 @@
 #include "path.h"
 #include "utils.h"
 
-// global job pool head
+// global job pool
 struct ProcessPool* JOB_POOL = NULL;
+int JOB_COUNT = 0;
 
 // get stats of process given by pid
 struct Process get_stats(pid_t pid) {
@@ -79,6 +80,8 @@ int add_job(pid_t pid, char* pname) {
         printf("[%d] %d\n", job_count, pid);
     }
 
+    JOB_COUNT++;
+
     return 0;
 }
 
@@ -102,6 +105,8 @@ struct Process remove_job(pid_t pid) {
         }
     }
 
+    JOB_COUNT--;
+
     return process;
 }
 
@@ -112,6 +117,9 @@ int clear_jobs() {
         killpg(job->process.pid, SIGKILL);
         job = job->next;
     }
+
+    JOB_COUNT = 0;
+
     return 0;
 }
 

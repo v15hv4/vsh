@@ -24,8 +24,9 @@ struct ProcessPool {
     struct ProcessPool* next;
 };
 
-// global job pool head
+// global job pool
 extern struct ProcessPool* JOB_POOL;
+extern int JOB_COUNT;
 
 // default process info
 static const struct Process PROCESS_DEFAULT = {-1, "", "", "", 0, 0};
