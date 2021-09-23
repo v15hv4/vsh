@@ -67,18 +67,18 @@ int add_job(pid_t pid, char* pname) {
 
     if (!JOB_POOL) {
         JOB_POOL = new_job;
-        printf("[1] %d\n", pid);
     } else {
-        int job_count = 2;
         struct ProcessPool* job = JOB_POOL;
         while (job->next) {
+            // increment new job's id if it already exists in pool
+            if (new_job->id == job->id) (new_job->id)++;
             job = job->next;
-            job_count++;
         }
-        new_job->id = job_count;
+        // increment new job's id if it is the latest job's id
+        if (new_job->id == job->id) (new_job->id)++;
         job->next = new_job;
-        printf("[%d] %d\n", job_count, pid);
     }
+    printf("[%d] %d\n", new_job->id, pid);
 
     JOB_COUNT++;
 
