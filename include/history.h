@@ -14,7 +14,7 @@ struct History {
 };
 
 // maintain current history cache to minimize disk reads
-static struct History HISTORY_CACHE;
+extern struct History HISTORY_CACHE;
 
 // read all entries from history file
 struct History read_history();

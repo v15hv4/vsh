@@ -3,21 +3,17 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <string.h>
 
-#include "path.h"
 #include "errors.h"
+#include "path.h"
 #include "utils.h"
 
-// maintain dynamic process pool
-struct ProcessPool {
-    int id;
-    struct Process process;
-    struct ProcessPool* next;
-}* job_pool = NULL;
+// global job pool head
+struct ProcessPool* JOB_POOL = NULL;
 
 // get stats of process given by pid
 struct Process get_stats(pid_t pid) {
@@ -37,9 +33,10 @@ struct Process get_stats(pid_t pid) {
     char** stat_values = split(stat_buffer, " ");
 
     target.pid = pid;
-    target.pstatus = stat_values[2];                                      // status given by state field
-    target.pforeground = (atoi(stat_values[7]) == atoi(stat_values[4]));  // in foreground if tpgid == pgrp
-    target.pvmemory = atoi(stat_values[22]);  // virtual memory given by vsize field
+    target.pstatus = stat_values[2];  // status given by state field
+    target.pforeground =
+        (atoi(stat_values[7]) == atoi(stat_values[4]));  // in foreground if tpgid == pgrp
+    target.pvmemory = atoi(stat_values[22]);             // virtual memory given by vsize field
 
     // generate process stat file path for given pid
     char* exe_path = calloc(strlen(proc_path_format) + 16, sizeof(char));
@@ -67,12 +64,12 @@ int add_job(pid_t pid, char* pname) {
     new_job->process = new_process;
     new_job->next = NULL;
 
-    if (!job_pool) {
-        job_pool = new_job;
+    if (!JOB_POOL) {
+        JOB_POOL = new_job;
         printf("[1] %d\n", pid);
     } else {
         int job_count = 2;
-        struct ProcessPool* job = job_pool;
+        struct ProcessPool* job = JOB_POOL;
         while (job->next) {
             job = job->next;
             job_count++;
@@ -89,11 +86,11 @@ int add_job(pid_t pid, char* pname) {
 struct Process remove_job(pid_t pid) {
     struct Process process = PROCESS_DEFAULT;
 
-    if (job_pool->process.pid == pid) {
-        process = job_pool->process;
-        job_pool = job_pool->next;
+    if (JOB_POOL->process.pid == pid) {
+        process = JOB_POOL->process;
+        JOB_POOL = JOB_POOL->next;
     } else {
-        struct ProcessPool* job = job_pool;
+        struct ProcessPool* job = JOB_POOL;
         while (job->next) {
             if (job->next->process.pid == pid) {
                 struct ProcessPool* target = job->next;
@@ -110,24 +107,12 @@ struct Process remove_job(pid_t pid) {
 
 // clear all jobs from pool
 int clear_jobs() {
-    struct ProcessPool* job = job_pool;
+    struct ProcessPool* job = JOB_POOL;
     while (job) {
         killpg(job->process.pid, SIGKILL);
         job = job->next;
     }
     return 0;
-}
-
-// print current job list
-int jobs(int argc, char** argv) {
-    struct ProcessPool* job = job_pool;
-    while (job) {
-        struct Process process = get_stats(job->process.pid);
-        printf("[%d]\t%s %s\t[%d]\n", job->id, process.pstatus[0] == 'T' ? "Stopped" : "Running", job->process.pname, job->process.pid);
-        job = job->next;
-    }
-
-    exit(0);
 }
 
 // execute process in the foreground

@@ -1,12 +1,11 @@
-#include "pinfo.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "proc.h"
+#include "commands.h"
 #include "errors.h"
 #include "path.h"
+#include "proc.h"
 
 // execute `pinfo`
 int pinfo(int argc, char** argv) {
@@ -16,7 +15,7 @@ int pinfo(int argc, char** argv) {
     if (!pid) pid = getpid();
 
     struct Process process = get_stats(pid);
-    if(process.pid == -1) throw_blocking_error("pinfo", -1);
+    if (process.pid == -1) throw_blocking_error("pinfo", -1);
 
     // print process info
     printf(
@@ -24,8 +23,8 @@ int pinfo(int argc, char** argv) {
         "process status -- %s%s\n"
         "memory -- %d\n"
         "executable path -- %s\n",
-        process.pid, process.pstatus, process.pforeground ? "+" : "", process.pvmemory, process.pexecutable);
+        process.pid, process.pstatus, process.pforeground ? "+" : "", process.pvmemory,
+        process.pexecutable);
 
     return 0;
 }
-

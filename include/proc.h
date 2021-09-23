@@ -2,6 +2,7 @@
 #define PROC_H_
 
 #include <signal.h>
+#include <stdio.h>
 
 // can't get filesize from /proc so explicitly define stat buffer size
 #define STAT_SIZE 1024
@@ -12,19 +13,22 @@ struct Process {
     char* pname;
     char* pstatus;
     char* pexecutable;
-    int pvmemory; 
+    int pvmemory;
     int pforeground;
 };
 
-// default process info
-static const struct Process PROCESS_DEFAULT = {
-    -1, 
-    "", 
-    "", 
-    "", 
-    0, 
-    0,
+// maintain dynamic process pool
+struct ProcessPool {
+    int id;
+    struct Process process;
+    struct ProcessPool* next;
 };
+
+// global job pool head
+extern struct ProcessPool* JOB_POOL;
+
+// default process info
+static const struct Process PROCESS_DEFAULT = {-1, "", "", "", 0, 0};
 
 // get stats of process given by pid
 struct Process get_stats(pid_t pid);

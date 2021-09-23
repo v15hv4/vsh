@@ -1,5 +1,3 @@
-#include "ls.h"
-
 #include <dirent.h>
 #include <math.h>
 #include <pwd.h>
@@ -11,6 +9,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "commands.h"
 #include "errors.h"
 #include "path.h"
 #include "utils.h"
@@ -217,4 +216,3 @@ int ls(int argc, char** argv) {
 
     exit(0);
 }
-

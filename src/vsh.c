@@ -6,11 +6,10 @@
 #include <unistd.h>
 
 #include "builtins.h"
+#include "commands.h"
 #include "errors.h"
 #include "history.h"
-#include "ls.h"
 #include "path.h"
-#include "pinfo.h"
 #include "proc.h"
 #include "prompt.h"
 #include "signals.h"

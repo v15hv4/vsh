@@ -7,6 +7,9 @@
 
 #include "utils.h"
 
+// maintain current history cache to minimize disk reads
+struct History HISTORY_CACHE;
+
 // read all entries from history file
 struct History read_history() {
     // initialize history entries
