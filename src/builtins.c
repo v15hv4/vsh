@@ -53,7 +53,7 @@ int __echo(int argc, char** argv) {
     }
     printf("\n");
 
-    return 0;
+    exit(0);
 }
 
 // execute shell builtin `exit`

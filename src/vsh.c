@@ -46,7 +46,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {sys,   __exit,  __cd, __pwd, __echo, ls,
-                                       pinfo, history, jobs, sig,   fg};
+                                       pinfo, history, jobs, sig,   fg,     bg};
     enum callback {
         kCall_sys,
         kCall_exit,
@@ -59,6 +59,7 @@ int main() {
         kCall_jobs,
         kCall_sig,
         kCall_fg,
+        kCall_bg,
     };
 
     // main loop
@@ -106,33 +107,37 @@ int main() {
             // determine callback enum
             if (!strcmp(tokens[0], "cd")) {
                 c_id = kCall_cd;
+                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "pwd")) {
                 c_id = kCall_pwd;
+                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "echo")) {
                 c_id = kCall_echo;
             } else if (!strcmp(tokens[0], "ls")) {
                 c_id = kCall_ls;
             } else if (!strcmp(tokens[0], "pinfo")) {
                 c_id = kCall_pinfo;
+                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "history")) {
                 c_id = kCall_history;
             } else if (!strcmp(tokens[0], "exit")) {
                 c_id = kCall_exit;
+                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "jobs")) {
                 c_id = kCall_jobs;
             } else if (!strcmp(tokens[0], "sig")) {
                 c_id = kCall_sig;
+                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "fg")) {
                 c_id = kCall_fg;
+                e_id = kExec_parent;
+            } else if (!strcmp(tokens[0], "bg")) {
+                c_id = kCall_bg;
+                e_id = kExec_parent;
             }
 
-            // determine execution enum
-            if (c_id == kCall_exit || c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo ||
-                c_id == kCall_pinfo || c_id == kCall_sig || c_id == kCall_fg) {
-                // execute shell builtins in parent process
-                e_id = kExec_parent;
-            } else if (command[strlen(command) - 1] == '&') {
-                // execute command in the background if suffixed with &
+            // execute command in the background if suffixed with &
+            if (command[strlen(command) - 1] == '&' && e_id != kExec_parent) {
                 e_id = kExec_background;
 
                 // strip & from command and tokens

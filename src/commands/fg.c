@@ -22,6 +22,11 @@ int fg(int argc, char** argv) {
     // remove process from pool
     remove_process(job.process.pid);
 
+    // resume process if it is stopped
+    if (kill(job.process.pid, SIGCONT)) {
+        return throw_custom_error("fg: unable to resume job", -3);
+    }
+
     // wait until process finishes
     wait(NULL);
 

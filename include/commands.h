@@ -16,4 +16,7 @@ int sig(int argc, char** argv);
 // execute `fg`
 int fg(int argc, char** argv);
 
+// execute `bg`
+int bg(int argc, char** argv);
+
 #endif
