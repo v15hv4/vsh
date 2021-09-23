@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "commands.h"
 #include "proc.h"
@@ -16,24 +17,42 @@ int jobs(int argc, char** argv) {
         // initialize empty job list
         struct ProcessPool job_list[JOB_COUNT];
 
-        // add running jobs to list
-        int job_idx = 0;
+        // set display flags
+        int r_flag = 0;  // show only running jobs
+        int s_flag = 0;  // show only stopped jobs
+
+        // fetch flags from input string
+        int opt;
+        while ((opt = getopt(argc, argv, ":rs")) != -1) {
+            if (opt == 'r') r_flag = 1;
+            if (opt == 's') s_flag = 1;
+        }
+
+        // default to showing all jobs if no flags provided
+        if (!r_flag && !s_flag) r_flag = s_flag = 1;
+
+        // add current jobs to list
+        int job_list_size = 0;
         struct ProcessPool* job = JOB_POOL;
         while (job) {
-            job_list[job_idx] = *job;
+            // determine status of process
+            job->process.pstatus = get_stats(job->process.pid).pstatus;
+            if ((job->process.pstatus[0] == 'T' && s_flag) ||
+                (job->process.pstatus[0] != 'T' && r_flag)) {
+                job_list[job_list_size] = *job;
+                job_list_size++;
+            }
             job = job->next;
-            job_idx++;
         }
 
         // sort jobs by name
-        qsort(&job_list, JOB_COUNT, sizeof(struct ProcessPool), job_comparator);
+        qsort(&job_list, job_list_size, sizeof(struct ProcessPool), job_comparator);
 
         // print job list
-        for (int i = 0; i < JOB_COUNT; i++) {
-            struct Process process = get_stats(job_list[i].process.pid);
+        for (int i = 0; i < job_list_size; i++) {
             printf("[%d]\t%s %s\t[%d]\n", job_list[i].id,
-                   process.pstatus[0] == 'T' ? "Stopped" : "Running", job_list[i].process.pname,
-                   job_list[i].process.pid);
+                   job_list[i].process.pstatus[0] == 'T' ? "Stopped" : "Running",
+                   job_list[i].process.pname, job_list[i].process.pid);
         }
     }
     exit(0);
