@@ -31,6 +31,9 @@ extern int JOB_COUNT;
 // default process info
 static const struct Process PROCESS_DEFAULT = {-1, "", "", "", 0, 0};
 
+// default process pool info
+static const struct ProcessPool PROCESSPOOL_DEFAULT = {-1, {}, NULL};
+
 // get stats of process given by pid
 struct Process get_stats(pid_t pid);
 
@@ -39,6 +42,9 @@ int add_job(pid_t pid, char* pname);
 
 // remove job from pool
 struct Process remove_job(pid_t pid);
+
+// get job given by id from pool
+struct ProcessPool get_job(int job_id);
 
 // clear all jobs from pool
 int clear_jobs();

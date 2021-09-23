@@ -110,6 +110,22 @@ struct Process remove_job(pid_t pid) {
     return process;
 }
 
+// get job given by id from pool
+struct ProcessPool get_job(int job_id) {
+    struct ProcessPool target = PROCESSPOOL_DEFAULT;
+
+    struct ProcessPool* job = JOB_POOL;
+    while (job) {
+        if (job->id == job_id) {
+            target = *job;
+            break;
+        }
+        job = job->next;
+    }
+
+    return target;
+}
+
 // clear all jobs from pool
 int clear_jobs() {
     struct ProcessPool* job = JOB_POOL;

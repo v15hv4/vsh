@@ -10,4 +10,7 @@ int pinfo(int argc, char** argv);
 // execute `jobs`
 int jobs(int argc, char** argv);
 
+// execute `jobs`
+int sig(int argc, char** argv);
+
 #endif

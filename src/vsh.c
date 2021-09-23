@@ -46,7 +46,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history, jobs,
+        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history, jobs, sig,
     };
     enum callback {
         kCall_sys,
@@ -58,6 +58,7 @@ int main() {
         kCall_pinfo,
         kCall_history,
         kCall_jobs,
+        kCall_sig,
     };
 
     // main loop
@@ -119,11 +120,13 @@ int main() {
                 c_id = kCall_exit;
             } else if (!strcmp(tokens[0], "jobs")) {
                 c_id = kCall_jobs;
+            } else if (!strcmp(tokens[0], "sig")) {
+                c_id = kCall_sig;
             }
 
             // determine execution enum
             if (c_id == kCall_exit || c_id == kCall_cd || c_id == kCall_pwd || c_id == kCall_echo ||
-                c_id == kCall_pinfo) {
+                c_id == kCall_pinfo || c_id == kCall_sig) {
                 // execute shell builtins in parent process
                 e_id = kExec_parent;
             } else if (command[strlen(command) - 1] == '&') {
