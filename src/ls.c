@@ -1,7 +1,6 @@
 #include "ls.h"
 
 #include <dirent.h>
-#include <linux/limits.h>
 #include <math.h>
 #include <pwd.h>
 #include <stdio.h>
@@ -218,3 +217,4 @@ int ls(int argc, char** argv) {
 
     exit(0);
 }
+

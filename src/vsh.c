@@ -24,7 +24,7 @@ int main() {
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
     handle_signal(SIGINT, do_nothing);
-    signal(SIGTSTP, SIG_IGN);
+    /* signal(SIGTSTP, SIG_IGN); */
 
     // initialize session history
     refetch_history_cache();
@@ -47,7 +47,7 @@ int main() {
 
     // function pointer enum for command callback
     int (*_callback[])(int, char**) = {
-        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history,
+        sys, __exit, __cd, __pwd, __echo, ls, pinfo, history, jobs,
     };
     enum callback {
         kCall_sys,
@@ -58,6 +58,7 @@ int main() {
         kCall_ls,
         kCall_pinfo,
         kCall_history,
+        kCall_jobs,
     };
 
     // main loop
@@ -117,6 +118,8 @@ int main() {
                 c_id = kCall_history;
             } else if (!strcmp(tokens[0], "exit")) {
                 c_id = kCall_exit;
+            } else if (!strcmp(tokens[0], "jobs")) {
+                c_id = kCall_jobs;
             }
 
             // determine execution enum
