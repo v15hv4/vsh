@@ -54,8 +54,8 @@ struct Process get_stats(pid_t pid) {
     return target;
 }
 
-// add job to pool
-int add_job(pid_t pid, char* pname) {
+// add process to job pool
+int add_process(pid_t pid, char* pname) {
     struct Process new_process = PROCESS_DEFAULT;
     new_process.pid = pid;
     new_process.pname = pname;
@@ -85,8 +85,8 @@ int add_job(pid_t pid, char* pname) {
     return 0;
 }
 
-// remove job from pool
-struct Process remove_job(pid_t pid) {
+// remove process from job pool
+struct Process remove_process(pid_t pid) {
     struct Process process = PROCESS_DEFAULT;
 
     if (JOB_POOL->process.pid == pid) {
@@ -168,7 +168,7 @@ int execute_background(int (*f)(int, char**), int argc, char** argv) {
         (*f)(argc, argv);
     } else {
         // maintain job info in the parent's job pool
-        add_job(pid, join(argv, argc, " "));
+        add_process(pid, join(argv, argc, " "));
     }
 
     return 0;

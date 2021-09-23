@@ -38,10 +38,10 @@ static const struct ProcessPool PROCESSPOOL_DEFAULT = {-1, {}, NULL};
 struct Process get_stats(pid_t pid);
 
 // add job to process pool
-int add_job(pid_t pid, char* pname);
+int add_process(pid_t pid, char* pname);
 
 // remove job from pool
-struct Process remove_job(pid_t pid);
+struct Process remove_process(pid_t pid);
 
 // get job given by id from pool
 struct ProcessPool get_job(int job_id);

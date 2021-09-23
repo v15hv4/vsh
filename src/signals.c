@@ -28,7 +28,7 @@ void reap_zombies(int signal) {
     // print exit message for each finished bg process
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
         status = WIFEXITED(status);
-        struct Process process = remove_job(pid);
+        struct Process process = remove_process(pid);
         printf("\n%s with pid %d exited %snormally\n", process.pname, pid, status ? "" : "ab");
         killed = 1;
     }

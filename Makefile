@@ -8,7 +8,7 @@ CC=gcc
 CFLAGS=-I$(IDIR)
 LIBS=-lm
 
-_CMDS=ls pinfo jobs sig
+_CMDS=ls pinfo jobs sig fg
 CMDS=$(patsubst %, $(CDIR)/%.o, $(_CMDS))
 
 _DEPS=vsh utils errors path proc prompt builtins history signals terminal
