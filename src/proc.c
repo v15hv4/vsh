@@ -12,6 +12,9 @@
 #include "path.h"
 #include "utils.h"
 
+// global current foreground process
+struct Process CURRENT_FOREGROUND_PROCESS = PROCESS_DEFAULT;
+
 // global job pool
 struct ProcessPool* JOB_POOL = NULL;
 int JOB_COUNT = 0;

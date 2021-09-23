@@ -17,6 +17,10 @@ struct Process {
     int pforeground;
 };
 
+// default process info
+#define PROCESS_DEFAULT \
+    { -1, "", "", "", 0, 0 }
+
 // maintain dynamic process pool
 struct ProcessPool {
     int id;
@@ -24,15 +28,16 @@ struct ProcessPool {
     struct ProcessPool* next;
 };
 
+// default process pool info
+#define PROCESSPOOL_DEFAULT \
+    { -1, PROCESS_DEFAULT, NULL }
+
+// global current foreground process
+extern struct Process CURRENT_FOREGROUND_PROCESS;
+
 // global job pool
 extern struct ProcessPool* JOB_POOL;
 extern int JOB_COUNT;
-
-// default process info
-static const struct Process PROCESS_DEFAULT = {-1, "", "", "", 0, 0};
-
-// default process pool info
-static const struct ProcessPool PROCESSPOOL_DEFAULT = {-1, {}, NULL};
 
 // get stats of process given by pid
 struct Process get_stats(pid_t pid);
