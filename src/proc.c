@@ -186,9 +186,13 @@ int execute_parent(int (*f)(int, char**), int argc, char** argv) {
 
 // execute system process
 int sys(int argc, char** argv) {
-    if (execvp(argv[0], argv)) {
+    char** argv_nt = calloc(argc + 1, sizeof(char*));
+    for (int i = 0; i < argc; i++) argv_nt[i] = argv[i];
+    argv_nt[argc] = NULL;
+
+    if (execvp(argv_nt[0], argv_nt)) {
         char* errmsg = calloc(128, sizeof(char));
-        sprintf(errmsg, "%s", argv[0]);
+        sprintf(errmsg, "%s", argv_nt[0]);
         throw_blocking_error(errmsg, -1);
         exit(1);
     }
