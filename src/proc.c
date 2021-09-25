@@ -151,8 +151,14 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv) {
         // execute command in the child process
         (*f)(argc, argv);
     } else {
+        // set current foreground process to child
+        CURRENT_FOREGROUND_PROCESS.pid = pid;
+
         // wait for child to finish execution in the parent process
         wait(NULL);
+
+        // reset current foreground process
+        CURRENT_FOREGROUND_PROCESS.pid = -1;
     }
 
     return 0;

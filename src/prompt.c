@@ -28,4 +28,5 @@ void print_prompt() {
 
     printf("<%s%s%s:%s> ", colorize(ANSI_GREEN, username), colorize(ANSI_GREEN, "@"),
            colorize(ANSI_GREEN, hostname), colorize(ANSI_BLUE, shorten_path(get_current_path())));
+    fflush(stdout);
 }

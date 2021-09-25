@@ -22,7 +22,7 @@ int main() {
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
-    handle_signal(SIGINT, do_nothing);
+    handle_signal(SIGINT, interrupt_fg);
     /* signal(SIGTSTP, SIG_IGN); */
 
     // initialize session history

@@ -7,10 +7,7 @@ void handle_signal(int signal, void (*handler)(int));
 // remove child processes that are completed
 void reap_zombies(int signal);
 
-// take lite
-void do_nothing(int signal);
-
-// clear current line
-void clear_line(int signal);
+// interrupt the current foreground process
+void interrupt_fg(int signal);
 
 #endif

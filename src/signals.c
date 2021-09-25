@@ -36,13 +36,15 @@ void reap_zombies(int signal) {
     // reprint prompt string in case a process was killed
     if (killed) {
         print_prompt();
-        fflush(stdout);
     }
 };
 
-// take lite
-void do_nothing(int signal) {
-    printf("\n");
-    print_prompt();
-    fflush(stdout);
+// interrupt the current foreground process
+void interrupt_fg(int signal) {
+    if (CURRENT_FOREGROUND_PROCESS.pid > 0) {
+        kill(CURRENT_FOREGROUND_PROCESS.pid, SIGINT);
+    } else {
+        printf("\n");
+        print_prompt();
+    }
 }
