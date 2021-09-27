@@ -22,8 +22,8 @@ int main() {
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
-    handle_signal(SIGINT, interrupt_fg);
-    /* signal(SIGTSTP, SIG_IGN); */
+    handle_signal(SIGINT, interrupt_fg);  // Ctrl + C
+    handle_signal(SIGTSTP, suspend_fg);   // Ctrl + Z
 
     // initialize session history
     refetch_history_cache();

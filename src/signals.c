@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "proc.h"
 #include "prompt.h"
@@ -41,10 +42,22 @@ void reap_zombies(int signal) {
 
 // interrupt the current foreground process
 void interrupt_fg(int signal) {
-    if (CURRENT_FOREGROUND_PROCESS.pid > 0) {
-        kill(CURRENT_FOREGROUND_PROCESS.pid, SIGINT);
-    } else {
+    if (CURRENT_FOREGROUND_PROCESS.pid < 0) {
         printf("\n");
         print_prompt();
+    }
+}
+
+// suspend the current foreground process
+void suspend_fg(int signal) {
+    if (CURRENT_FOREGROUND_PROCESS.pid > 0) {
+        // create a new process group for the child
+        setpgid(CURRENT_FOREGROUND_PROCESS.pid, 0);
+
+        // maintain job info in the parent's job pool
+        add_process(CURRENT_FOREGROUND_PROCESS.pid, CURRENT_FOREGROUND_PROCESS.pname);
+
+        // reset current foreground process
+        CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;
     }
 }

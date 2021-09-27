@@ -15,7 +15,7 @@ int pinfo(int argc, char** argv) {
     if (!pid) pid = getpid();
 
     struct Process process = get_stats(pid);
-    if (process.pid == -1) throw_blocking_error("pinfo", -1);
+    if (process.pid == -1) return throw_custom_error("pinfo: invalid process id", -1);
 
     // print process info
     printf(

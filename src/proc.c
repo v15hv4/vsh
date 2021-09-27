@@ -153,12 +153,14 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv) {
     } else {
         // set current foreground process to child
         CURRENT_FOREGROUND_PROCESS.pid = pid;
+        CURRENT_FOREGROUND_PROCESS.pname = join(argv, argc, " ");
 
         // wait for child to finish execution in the parent process
-        wait(NULL);
+        int status;
+        waitpid(pid, &status, WUNTRACED);
 
         // reset current foreground process
-        CURRENT_FOREGROUND_PROCESS.pid = -1;
+        CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;
     }
 
     return 0;

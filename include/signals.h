@@ -10,4 +10,7 @@ void reap_zombies(int signal);
 // interrupt the current foreground process
 void interrupt_fg(int signal);
 
+// suspend the current foreground process
+void suspend_fg(int signal);
+
 #endif

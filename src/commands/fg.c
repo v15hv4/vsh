@@ -5,6 +5,7 @@
 #include "commands.h"
 #include "errors.h"
 #include "proc.h"
+#include "utils.h"
 
 int fg(int argc, char** argv) {
     if (argc < 2) return throw_custom_error("fg: not enough arguments", -1);
@@ -17,7 +18,7 @@ int fg(int argc, char** argv) {
     if (job.id == -1) return throw_custom_error("fg: invalid job id", -2);
 
     // bring process to the foreground
-    setpgid(job.process.pid, getpid());
+    setpgid(job.process.pid, getpid());  // TODO: set to parent's PGID instead
 
     // remove process from pool
     remove_process(job.process.pid);
@@ -27,8 +28,16 @@ int fg(int argc, char** argv) {
         return throw_custom_error("fg: unable to resume job", -3);
     }
 
-    // wait until process finishes
-    wait(NULL);
+    // set current foreground process to child
+    CURRENT_FOREGROUND_PROCESS.pid = job.process.pid;
+    CURRENT_FOREGROUND_PROCESS.pname = job.process.pname;
+
+    // wait for child to finish execution in the parent process
+    int status;
+    waitpid(job.process.pid, &status, WUNTRACED);
+
+    // reset current foreground process
+    CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;
 
     return 0;
 }
