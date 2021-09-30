@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -23,9 +24,18 @@ int fg(int argc, char** argv) {
     // remove process from pool
     remove_process(job.process.pid);
 
+    // give terminal control to new job
+    signal(SIGTTOU, SIG_IGN);
+    signal(SIGTTIN, SIG_IGN);
+    if (tcsetpgrp(STDIN_FILENO, getpgid(job.process.pid))) {
+        signal(SIGTTOU, SIG_DFL);
+        signal(SIGTTIN, SIG_DFL);
+        return throw_custom_error("fg: unable to give terminal control to job", -3);
+    }
+
     // resume process if it is stopped
     if (kill(job.process.pid, SIGCONT)) {
-        return throw_custom_error("fg: unable to resume job", -3);
+        return throw_custom_error("fg: unable to resume job", -4);
     }
 
     // set current foreground process to child
@@ -38,6 +48,14 @@ int fg(int argc, char** argv) {
 
     // reset current foreground process
     CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;
+
+    // return terminal control to shell
+    if (tcsetpgrp(STDIN_FILENO, getpgid(0))) {
+        throw_fatal_error("fg: unable to return terminal control to shell");
+    }
+
+    signal(SIGTTOU, SIG_DFL);
+    signal(SIGTTIN, SIG_DFL);
 
     return 0;
 }
