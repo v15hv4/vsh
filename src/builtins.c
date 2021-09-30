@@ -43,7 +43,7 @@ int __cd(int argc, char** argv) {
 int __pwd(int argc, char** argv) {
     printf("%s\n", get_current_path());
 
-    return 0;
+    exit(0);
 }
 
 // execute shell builtin `echo`

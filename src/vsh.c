@@ -82,7 +82,7 @@ int main() {
             char* command = strip(commands[i]);
 
             // command properties
-            int repeat = 0;                        // number of times to execute command
+            int repeat = 0;                        // number of times to repeat command
             enum execute e_id = kExec_foreground;  // execution layer id
             enum callback c_id = kCall_sys;        // callback id
 
@@ -111,7 +111,6 @@ int main() {
                 e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "pwd")) {
                 c_id = kCall_pwd;
-                e_id = kExec_parent;
             } else if (!strcmp(tokens[0], "echo")) {
                 c_id = kCall_echo;
             } else if (!strcmp(tokens[0], "ls")) {
