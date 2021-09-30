@@ -12,7 +12,7 @@ int pinfo(int argc, char** argv) {
     // get pid as input, default to current process
     pid_t pid = 0;
     if (argc > 1) pid = (pid_t)atoi(argv[1]);
-    if (!pid) pid = getpid();
+    if (!pid) pid = getppid();
 
     struct Process process = get_stats(pid);
     if (process.pid == -1) return throw_custom_error("pinfo: invalid process id", -1);
@@ -23,8 +23,8 @@ int pinfo(int argc, char** argv) {
         "process status -- %s%s\n"
         "memory -- %d\n"
         "executable path -- %s\n",
-        process.pid, process.pstatus, process.pforeground ? "+" : "", process.pvmemory,
-        process.pexecutable);
+        process.pid, argc < 2 ? "R" : process.pstatus, process.pforeground ? "+" : "",
+        process.pvmemory, process.pexecutable);
 
-    return 0;
+    exit(0);
 }

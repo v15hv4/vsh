@@ -58,13 +58,13 @@ int clear_jobs();
 int jobs(int argc, char** argv);
 
 // execute process in the foreground
-int execute_foreground(int (*f)(int, char**), int argc, char** argv);
+int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd);
 
 // execute process in the background
-int execute_background(int (*f)(int, char**), int argc, char** argv);
+int execute_background(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd);
 
 // execute process in the parent
-int execute_parent(int (*f)(int, char**), int argc, char** argv);
+int execute_parent(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd);
 
 // execute system process
 int sys(int argc, char** argv);

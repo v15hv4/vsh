@@ -18,20 +18,20 @@ struct termios terminal;
 // disable raw mode
 void disable_raw_mode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &terminal) == -1) {
-        throw_fatal_error("terminal");
+        /* return throw_fatal_error("terminal: can't disable raw mode"); */
     }
 }
 
 // enable raw terminal mode
 void enable_raw_mode() {
     if (tcgetattr(STDIN_FILENO, &terminal) == -1) {
-        throw_fatal_error("terminal");
+        return throw_fatal_error("terminal: can't get attributes");
     }
     atexit(disable_raw_mode);
     struct termios raw = terminal;
     raw.c_lflag &= ~(ICANON | ECHO);
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
-        throw_fatal_error("terminal");
+        return throw_fatal_error("terminal: can't enable raw mode");
     }
 }
 

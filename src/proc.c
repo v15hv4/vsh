@@ -143,17 +143,25 @@ int clear_jobs() {
 }
 
 // execute process in the foreground
-int execute_foreground(int (*f)(int, char**), int argc, char** argv) {
+int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd) {
     pid_t pid = fork();
     if (pid < 0) return -1;
 
     if (pid == 0) {
+        // set io file descriptors
+        dup2(in_fd, STDIN_FILENO);
+        dup2(out_fd, STDOUT_FILENO);
+
         // execute command in the child process
         (*f)(argc, argv);
     } else {
         // set current foreground process to child
         CURRENT_FOREGROUND_PROCESS.pid = pid;
         CURRENT_FOREGROUND_PROCESS.pname = join(argv, argc, " ");
+
+        // close io file descriptors
+        if (in_fd != STDIN_FILENO) close(in_fd);
+        if (out_fd != STDOUT_FILENO) close(out_fd);
 
         // wait for child to finish execution in the parent process
         int status;
@@ -167,7 +175,7 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv) {
 }
 
 // execute process in the background
-int execute_background(int (*f)(int, char**), int argc, char** argv) {
+int execute_background(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd) {
     pid_t pid = fork();
     if (pid < 0) return -1;
 
@@ -186,7 +194,7 @@ int execute_background(int (*f)(int, char**), int argc, char** argv) {
 }
 
 // execute process in the parent
-int execute_parent(int (*f)(int, char**), int argc, char** argv) {
+int execute_parent(int (*f)(int, char**), int argc, char** argv, int in_fd, int out_fd) {
     (*f)(argc, argv);
 
     return 0;
