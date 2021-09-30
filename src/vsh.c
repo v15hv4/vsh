@@ -82,7 +82,7 @@ int main() {
             char* command = strip(commands[i]);
 
             // command properties
-            int repeat = 1;                        // number of times to execute command
+            int repeat = 0;                        // number of times to execute command
             enum execute e_id = kExec_foreground;  // execution layer id
             enum callback c_id = kCall_sys;        // callback id
 
@@ -91,8 +91,8 @@ int main() {
             char** tokens = split(command, " \t\r\n\v\f");
 
             // determine number of times to execute command
-            if (!strcmp(tokens[0], "repeat")) {
-                repeat = atoi(tokens[1]);
+            while (!strcmp(tokens[0], "repeat")) {
+                repeat += atoi(tokens[1]);
 
                 // if `repeat` syntax is valid
                 if (repeat && token_count > 2) {
@@ -103,6 +103,7 @@ int main() {
                     repeat = 1;
                 }
             }
+            if (!repeat) repeat = 1;
 
             // determine callback enum
             if (!strcmp(tokens[0], "cd")) {
