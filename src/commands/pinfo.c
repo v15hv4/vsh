@@ -26,5 +26,5 @@ int pinfo(int argc, char** argv) {
         process.pid, argc < 2 ? "R" : process.pstatus, process.pforeground ? "+" : "",
         process.pvmemory, process.pexecutable);
 
-    exit(0);
+    return 0;
 }

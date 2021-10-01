@@ -105,6 +105,6 @@ int history(int argc, char** argv) {
         printf("%2d  %s\n", i + 1, existing.entries[i]);
     }
 
-    exit(0);
+    return 0;
 }
 

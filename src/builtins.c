@@ -43,7 +43,7 @@ int __cd(int argc, char** argv) {
 int __pwd(int argc, char** argv) {
     printf("%s\n", get_current_path());
 
-    exit(0);
+    return 0;
 }
 
 // execute shell builtin `echo`
@@ -53,7 +53,7 @@ int __echo(int argc, char** argv) {
     }
     printf("\n");
 
-    exit(0);
+    return 0;
 }
 
 // execute shell builtin `exit`
@@ -65,5 +65,5 @@ int __exit(int argc, char** argv) {
     write_history("exit");
     printf("exit\n");
 
-    exit(0);
+    return 0;
 }

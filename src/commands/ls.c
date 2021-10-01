@@ -214,5 +214,5 @@ int ls(int argc, char** argv) {
         if (i != dir_count - 1) printf("\n");
     }
 
-    exit(0);
+    return 0;
 }

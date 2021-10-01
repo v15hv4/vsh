@@ -147,6 +147,10 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, 
     pid_t pid = fork();
     if (pid < 0) return -1;
 
+    // back up STDIN and STDOUT file descriptors
+    int stdin_bkp = dup(STDIN_FILENO);
+    int stdout_bkp = dup(STDOUT_FILENO);
+
     if (pid == 0) {
         // set io file descriptors
         dup2(in_fd, STDIN_FILENO);
@@ -154,6 +158,13 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, 
 
         // execute command in the child process
         (*f)(argc, argv);
+
+        // restore STDIN and STDOUT
+        dup2(stdin_bkp, STDIN_FILENO);
+        dup2(stdout_bkp, STDOUT_FILENO);
+
+        // exit the process if it hasn't exited already
+        exit(0);
     } else {
         // set current foreground process to child
         CURRENT_FOREGROUND_PROCESS.pid = pid;
@@ -166,6 +177,10 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, 
         // wait for child to finish execution in the parent process
         int status;
         waitpid(pid, &status, WUNTRACED);
+
+        // restore STDIN and STDOUT
+        dup2(stdin_bkp, STDIN_FILENO);
+        dup2(stdout_bkp, STDOUT_FILENO);
 
         // reset current foreground process
         CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;
@@ -185,6 +200,9 @@ int execute_background(int (*f)(int, char**), int argc, char** argv, int in_fd, 
 
         // execute command in the child process
         (*f)(argc, argv);
+
+        // exit the process if it hasn't exited already
+        exit(0);
     } else {
         // maintain job info in the parent's job pool
         add_process(pid, join(argv, argc, " "));

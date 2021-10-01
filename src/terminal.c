@@ -18,7 +18,7 @@ struct termios terminal;
 // disable raw mode
 void disable_raw_mode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &terminal) == -1) {
-        /* return throw_fatal_error("terminal: can't disable raw mode"); */
+        return throw_fatal_error("terminal: can't disable raw mode");
     }
 }
 

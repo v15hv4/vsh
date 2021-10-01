@@ -55,5 +55,6 @@ int jobs(int argc, char** argv) {
                    job_list[i].process.pname, job_list[i].process.pid);
         }
     }
-    exit(0);
+
+    return 0;
 }
