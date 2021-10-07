@@ -18,7 +18,7 @@
 
 int main() {
     // control debug mode
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
@@ -101,8 +101,8 @@ int main() {
                 enum callback c_id = kCall_sys;        // callback id
 
                 // tokenize command
-                int token_count = num_tokens(command, " \t\r\n\v\f");
-                char** tokens = split(command, " \t\r\n\v\f");
+                int token_count = num_tokens(command, WHITESPACE);
+                char** tokens = split(command, WHITESPACE);
 
                 // determine number of times to execute command
                 while (!strcmp(tokens[0], "repeat")) {
@@ -172,26 +172,42 @@ int main() {
                     }
                 }
 
-                // DEBUG OUTPUT
-                if (DEBUG) {
-                    printf(
-                        "----------\n"
-                        "input_line: %s\n"
-                        "e_id: %d\n"
-                        "c_id: %d\n"
-                        "repeat: %d\n"
-                        "token_count: %d\n"
-                        "tokens: %s\n"
-                        "pipe_count: %d\n"
-                        "i: %d, j: %d\n"
-                        "----------\n",
-                        input_line, e_id, c_id, repeat, token_count,
-                        join(tokens, token_count, ", "), pipe_count, i, j);
+                // determine io file descriptors based on pipes and redirections
+                int in_fd, out_fd;
+
+                // redirect from file
+                if (num_tokens(command, "<") > 1) {
+                    in_fd = redirect('r', command, tokens, &token_count);
+                } else {
+                    in_fd = j ? pipe_fds[!(j % 2)][READ] : STDIN_FILENO;
                 }
 
-                // determine io file descriptors
-                int in_fd = j ? pipe_fds[!(j % 2)][READ] : STDIN_FILENO;
-                int out_fd = j < pipe_count - 1 ? pipe_fds[j % 2][WRITE] : STDOUT_FILENO;
+                // redirect to file
+                if (num_tokens(command, ">>") > 1) {
+                    out_fd = redirect('a', command, tokens, &token_count);
+                } else if (num_tokens(command, ">") > 1) {
+                    out_fd = redirect('w', command, tokens, &token_count);
+                } else {
+                    out_fd = j < pipe_count - 1 ? pipe_fds[j % 2][WRITE] : STDOUT_FILENO;
+                }
+
+                // DEBUG OUTPUT
+                if (DEBUG) {
+                    fprintf(stderr,
+                            "-----------------------\n"
+                            "input_line: %s\n"
+                            "e_id: %d\n"
+                            "c_id: %d\n"
+                            "repeat: %d\n"
+                            "token_count: %d\n"
+                            "tokens: %s\n"
+                            "pipe_count: %d\n"
+                            "i: %d, j: %d\n"
+                            "\nnow executing: %s\n"
+                            "-----------------------\n",
+                            input_line, e_id, c_id, repeat, token_count,
+                            join(tokens, token_count, ", "), pipe_count, i, j, command);
+                }
 
                 // execute command
                 for (int c = 1; c <= repeat; c++) {

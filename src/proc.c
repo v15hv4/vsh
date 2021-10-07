@@ -159,9 +159,15 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, 
         // execute command in the child process
         (*f)(argc, argv);
 
+        // close io file descriptors
+        if (in_fd != STDIN_FILENO) close(in_fd);
+        if (out_fd != STDOUT_FILENO) close(out_fd);
+
         // restore STDIN and STDOUT
         dup2(stdin_bkp, STDIN_FILENO);
         dup2(stdout_bkp, STDOUT_FILENO);
+        close(stdin_bkp);
+        close(stdout_bkp);
 
         // exit the process if it hasn't exited already
         exit(0);
@@ -181,6 +187,8 @@ int execute_foreground(int (*f)(int, char**), int argc, char** argv, int in_fd, 
         // restore STDIN and STDOUT
         dup2(stdin_bkp, STDIN_FILENO);
         dup2(stdout_bkp, STDOUT_FILENO);
+        close(stdin_bkp);
+        close(stdout_bkp);
 
         // reset current foreground process
         CURRENT_FOREGROUND_PROCESS = (struct Process)PROCESS_DEFAULT;

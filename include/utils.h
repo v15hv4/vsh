@@ -11,6 +11,9 @@
 #define ANSI_WHITE "\e[37m"
 #define ANSI_RESET "\e[0m"
 
+// whitespace characters
+#define WHITESPACE " \t\r\n\v\f"
+
 // format string with colors
 char* colorize(char* color, char* str);
 
@@ -25,5 +28,8 @@ char** split(char* str, char* delim);
 
 // return string made by concatenating array elements with delim
 char* join(char** arr, int arr_length, char* delim);
+
+// open file and return fd for redirecting from/to it
+int redirect(char mode, char* command, char** tokens, int* token_count);
 
 #endif
