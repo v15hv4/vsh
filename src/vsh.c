@@ -172,6 +172,8 @@ int main() {
                         new_final_token[new_final_token_len - 1] = '\0';
                         tokens[token_count - 1] = new_final_token;
                     }
+
+                    command = join(tokens, token_count, " ");
                 }
 
                 // determine io file descriptors based on pipes and redirections
