@@ -18,7 +18,7 @@
 
 int main() {
     // control debug mode
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     // set up signal handlers
     handle_signal(SIGCHLD, reap_zombies);
@@ -173,23 +173,25 @@ int main() {
                 }
 
                 // determine io file descriptors based on pipes and redirections
-                int in_fd, out_fd;
+                int in_fd = STDIN_FILENO;
+                int out_fd = STDOUT_FILENO;
 
-                // redirect from file
-                if (num_tokens(command, "<") > 1) {
-                    in_fd = redirect('r', command, tokens, &token_count);
-                } else {
-                    in_fd = j ? pipe_fds[!(j % 2)][READ] : STDIN_FILENO;
+                // apply redirects to files
+                command = redirect(command, &in_fd, &out_fd);
+
+                // if not redirecting input, receive from previous pipe
+                if (!strchr(command, '<') && j) {
+                    in_fd = pipe_fds[!(j % 2)][READ];
                 }
 
-                // redirect to file
-                if (num_tokens(command, ">>") > 1) {
-                    out_fd = redirect('a', command, tokens, &token_count);
-                } else if (num_tokens(command, ">") > 1) {
-                    out_fd = redirect('w', command, tokens, &token_count);
-                } else {
-                    out_fd = j < pipe_count - 1 ? pipe_fds[j % 2][WRITE] : STDOUT_FILENO;
+                // if not redirecting output, send to next pipe
+                if (!strchr(command, '>') && (j < pipe_count - 1)) {
+                    out_fd = pipe_fds[j % 2][WRITE];
                 }
+
+                // update tokens
+                tokens = split(command, WHITESPACE);
+                token_count = num_tokens(command, WHITESPACE);
 
                 // DEBUG OUTPUT
                 if (DEBUG) {

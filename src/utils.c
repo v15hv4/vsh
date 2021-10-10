@@ -84,41 +84,54 @@ char* join(char** arr, int arr_length, char* delim) {
     return str;
 }
 
-// open file and return fd for redirecting from/to it
-int redirect(char mode, char* command, char** tokens, int* token_count) {
-    int fd = -1;
-    char** redir_tokens;
-    char** trailing_tokens;
-    char* trailing_command;
+// open file, assign fd for redirecting from/to it, return command
+char* redirect(char* command, int* in_fd, int* out_fd) {
+    char* start = command;
+    char* end = strrchr(command, '\0');
 
-    // TODO: handle multiple < and >
+    // output redirection
+    char* out_ptr = strchr(command, '>');
+    if (!(long long)out_ptr) out_ptr = end;
 
-    if (mode == 'r') {
-        redir_tokens = split(command, "<");
-        trailing_tokens = split(redir_tokens[1], ">");
-        fd = open(strip(trailing_tokens[0]), O_RDONLY, 0644);
-    } else if (mode == 'a') {
-        redir_tokens = split(command, ">>");
-        trailing_tokens = split(redir_tokens[1], "<");
-        fd = open(strip(trailing_tokens[0]), O_WRONLY | O_APPEND | O_CREAT, 0644);
-    } else if (mode == 'w') {
-        redir_tokens = split(command, ">");
-        trailing_tokens = split(redir_tokens[1], "<");
-        fd = open(strip(trailing_tokens[0]), O_WRONLY | O_CREAT, 0644);
+    // input redirection
+    char* in_ptr = strchr(command, '<');
+    if (!(long long)in_ptr) in_ptr = start;
+
+    // reassign output fd
+    if (out_ptr++ != strrchr(command, '\0')) {
+        int append = (out_ptr[0] == '>');
+        out_ptr += append;
+
+        int out_size = end - out_ptr;
+        char* out_path = calloc(out_size, sizeof(char));
+        strncpy(out_path, strip(out_ptr), out_size);
+
+        *out_fd = open(strip(out_path), O_WRONLY | O_CREAT | (append ? O_APPEND : 0), 0644);
+        if (out_fd < 0) {
+            throw_blocking_error("", -1);
+            return command;
+        }
+
+        // reassign end of command pointer
+        end = out_ptr - (1 + append);
     }
 
-    if (fd < 0) {
-        char* errmsg = calloc(256, sizeof(char));
-        char* errformat = "redirect: %s";
-        sprintf(errmsg, errformat, redir_tokens[1]);
-        throw_fatal_error(errmsg);
+    // reassign input fd
+    if (in_ptr++ != command) {
+        int in_size = out_ptr - in_ptr - 2;
+        char* in_path = calloc(in_size, sizeof(char));
+        strncpy(in_path, strip(in_ptr), in_size);
+
+        *in_fd = open(strip(in_path), O_RDONLY, 0644);
+
+        // reassign end of command pointer
+        end = in_ptr - 1;
     }
 
-    // update command and tokens
-    printf("0: %s \n 1: %s\n", redir_tokens[0], trailing_tokens[1]);
-    command = redir_tokens[0];  // TODO: also redir_tokens[2:]
-    tokens = split(command, WHITESPACE);
-    *token_count = num_tokens(command, WHITESPACE);
+    // regenerate command
+    int new_command_size = end - start;
+    char* new_command = calloc(new_command_size, sizeof(char));
+    strncpy(new_command, strip(start), (end - start));
 
-    return fd;
+    return new_command;
 }

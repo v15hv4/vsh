@@ -29,7 +29,6 @@ char** split(char* str, char* delim);
 // return string made by concatenating array elements with delim
 char* join(char** arr, int arr_length, char* delim);
 
-// open file and return fd for redirecting from/to it
-int redirect(char mode, char* command, char** tokens, int* token_count);
-
+// open file, assign fd for redirecting from/to it, return command
+char* redirect(char* command, int* in_fd, int* out_fd);
 #endif
