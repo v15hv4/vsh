@@ -48,6 +48,22 @@ The key combination `Ctrl+L` can be used to clear the screen.
 A list of commands built-in to the shell whose functions are impossible or
 inconvenient to implement by external executables.
 
+### Input/Output Redirection
+The output of a process can be redirected to files using the symbols '>' (truncate & write) 
+and '>>' (append), while input can be redirected to processes using the symbol '<'. 
+Both input and output redirection can be used simultaneously.
+
+### Command Pipelines
+The output of a foreground process can be redirected into another process as its input using 
+the symbol '|' between two commands. Multiple commands can be piped together. Piping and 
+redirection can be used in tandem.
+
+### Signal Handling
+The key combination `Ctrl+C` can be used to send a `SIGINT`, which is caught by the shell
+and directed to the foreground process for it to handle.  
+The key combination `Ctrl+Z` can be used to send a `SIGTSTP`, which is caught by the shell
+and causes the current foreground process to be suspended (stopped and sent to the background).
+
 #### `cd`
 ```
 Usage: cd <path_to_directory>
@@ -81,7 +97,7 @@ A list of custom-implemented or user-defined shell commands.
 
 #### `ls`
 ```
-Usage: ls <path_to_directory_1> <path_to_directory_2> ...
+Usage: ls [options] <path_to_directory_1> <path_to_directory_2> ...
 ```
 Lists contents of the directories specified by input arguments. In case of
 no arguments, it defaults to contents of the current working directory.
@@ -120,6 +136,39 @@ the commands stored in history.
 Stores upto 20 of the latest commands, and ignores consecutively repeated ones.  
 Commands are tracked across all sessions of the shell.
 
+#### `jobs`
+```
+Usage: jobs [options]
+```
+Prints a list of all currently running background processes spawned by the shell
+in alphabetical order of the command name, along with their job number, process ID,
+and their state, which can either be 'Running' or 'Stopped'.
+Supports the following options:
+- `-r`: prints only running processes
+- `-s`: prints only stopped processes
+
+#### `sig`
+```
+Usage: sig <job_id> <signal_number>
+```
+Takes the job number of a running job and sends the signal corresponding to the input 
+signal number to the process.
+
+#### `fg`
+```
+Usage: fg <job_id> 
+```
+Brings the running or stopped background job corresponding to the input job number
+to the foreground and changes its state to running.  
+Throws an error if no job with the corresponding number exists.
+
+#### `bg`
+```
+Usage: bg <job_id> 
+```
+Changes the state of a stopped background job to running (in the background).  
+Throws an error if no job with the corresponding number exists.
+
 ### Additional Commands
 A list of additional commands added for convenience of the shell user.
 
@@ -153,3 +202,6 @@ the shell as follows:
   minutes in long listing format.
 - The shell user has read and write access to `/tmp`. This is necessary
   to manage the history file.
+- Only foreground processes will be pipelined.
+- Exactly one argument will be provided to the redirection operator that points
+  to the input/output file.
