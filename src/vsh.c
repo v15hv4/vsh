@@ -86,6 +86,8 @@ int main() {
             int pipe_count = num_tokens(commands[i], "|");
             char** pipes = split(commands[i], "|");
 
+            int failure = 0;
+
             for (int j = 0; j < pipe_count; j++) {
                 // open pipe
                 if (pipe(pipe_fds[j % 2]) == -1) {
@@ -176,17 +178,25 @@ int main() {
                 int in_fd = STDIN_FILENO;
                 int out_fd = STDOUT_FILENO;
 
-                // apply redirects to files
-                command = redirect(command, &in_fd, &out_fd);
-
                 // if not redirecting input, receive from previous pipe
                 if (!strchr(command, '<') && j) {
                     in_fd = pipe_fds[!(j % 2)][READ];
+                    if (failure) {
+                        close(pipe_fds[!(j % 2)][WRITE]);
+                    }
                 }
 
                 // if not redirecting output, send to next pipe
                 if (!strchr(command, '>') && (j < pipe_count - 1)) {
                     out_fd = pipe_fds[j % 2][WRITE];
+                }
+
+                // apply redirects to files
+                failure = 0;
+                command = redirect(command, &in_fd, &out_fd);
+                if (!command) {
+                    failure = 1;
+                    continue;
                 }
 
                 // update tokens

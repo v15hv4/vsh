@@ -107,9 +107,9 @@ char* redirect(char* command, int* in_fd, int* out_fd) {
         strncpy(out_path, strip(out_ptr), out_size);
 
         *out_fd = open(strip(out_path), O_WRONLY | O_CREAT | (append ? O_APPEND : 0), 0644);
-        if (out_fd < 0) {
-            throw_blocking_error("", -1);
-            return command;
+        if (*out_fd < 0) {
+            throw_blocking_error("redirect", -1);
+            return NULL;
         }
 
         // reassign end of command pointer
@@ -123,6 +123,10 @@ char* redirect(char* command, int* in_fd, int* out_fd) {
         strncpy(in_path, strip(in_ptr), in_size);
 
         *in_fd = open(strip(in_path), O_RDONLY, 0644);
+        if (*in_fd < 0) {
+            throw_blocking_error("redirect", -1);
+            return NULL;
+        }
 
         // reassign end of command pointer
         end = in_ptr - 1;
